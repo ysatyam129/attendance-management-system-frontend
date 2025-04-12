@@ -16,7 +16,7 @@ export default function Home() {
             </div>
             <div className="flex space-x-4 items-center">
               <Link href="/admin/login">
-                <Button className="bg-blue-600 hover:bg-blue-700">Admin Portal</Button>
+                <Button className="bg-orange-600 hover:bg-orange-700">Admin Portal</Button>
               </Link>
               <Link href="/employee/login">
                 <Button className="bg-green-600 hover:bg-green-700">Employee Portal</Button>
@@ -29,7 +29,7 @@ export default function Home() {
       {/* Hero Section with Background Image */}
       <div className="relative h-[600px]">
         <Image
-          src="/background.jpg" 
+          src="https://images.unsplash.com/photo-1472289065668-ce650ac443d2?q=80&w=2069&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" 
           alt="Office background"
           fill
           className="object-cover"

@@ -1,26 +1,41 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import Link from "next/link"
+import { useState } from "react";
+import Link from "next/link";
 
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Card,CardContent,CardDescription,CardHeader,CardTitle } from "@/components/ui/card"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Badge } from "@/components/ui/badge"
-import { 
-    Users, 
-    UserPlus, 
-    Search, 
-    LogOut, 
-    Settings, 
-    Bell, 
-    Menu, 
-    X 
-  } from "lucide-react"
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
+import {
+  Users,
+  UserPlus,
+  Search,
+  LogOut,
+  Settings,
+  Bell,
+  Menu,
+  X,
+} from "lucide-react";
+import EmployeeModal from "@/components/EmployeeModal";
 
 export default function AdminDashboard() {
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Mock employee data
   const employees = [
@@ -72,7 +87,7 @@ export default function AdminDashboard() {
       shift: "Night",
       status: "Inactive",
     },
-  ]
+  ];
 
   return (
     <div className="flex h-screen bg-gray-100 text-black">
@@ -111,8 +126,15 @@ export default function AdminDashboard() {
       </div>
 
       {/* Mobile menu */}
-      <div className={`fixed inset-0 z-40 md:hidden ${isMobileMenuOpen ? "block" : "hidden"}`}>
-        <div className="fixed inset-0 bg-gray-600 bg-opacity-75" onClick={() => setIsMobileMenuOpen(false)}></div>
+      <div
+        className={`fixed inset-0 z-40 md:hidden ${
+          isMobileMenuOpen ? "block" : "hidden"
+        }`}
+      >
+        <div
+          className="fixed inset-0 bg-gray-600 bg-opacity-75"
+          onClick={() => setIsMobileMenuOpen(false)}
+        ></div>
         <div className="relative flex-1 flex flex-col max-w-xs w-full bg-white">
           <div className="absolute top-0 right-0 -mr-12 pt-2">
             <button
@@ -169,7 +191,9 @@ export default function AdminDashboard() {
                 >
                   <Menu className="h-6 w-6" />
                 </button>
-                <h1 className="text-xl font-semibold ml-2 md:ml-0 ">Employee Management</h1>
+                <h1 className="text-xl font-semibold ml-2 md:ml-0 ">
+                  Employee Management
+                </h1>
               </div>
               <div className="flex items-center">
                 <button className="p-1 rounded-full text-gray-400 hover:text-gray-500 focus:outline-none">
@@ -189,7 +213,9 @@ export default function AdminDashboard() {
         <main className="flex-1 overflow-y-auto bg-gray-100 p-4 sm:p-6 lg:p-8">
           <div className="mb-6">
             <h2 className="text-2xl font-bold">Employee Management</h2>
-            <p className="text-gray-600">Manage your employees and their information</p>
+            <p className="text-gray-600">
+              Manage your employees and their information
+            </p>
           </div>
 
           <div className="flex flex-col md:flex-row gap-4 mb-6">
@@ -208,7 +234,9 @@ export default function AdminDashboard() {
                 <CardDescription>Currently working</CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="text-3xl font-bold">{employees.filter((e) => e.status === "Active").length}</div>
+                <div className="text-3xl font-bold">
+                  {employees.filter((e) => e.status === "Active").length}
+                </div>
               </CardContent>
             </Card>
             <Card className="flex-1">
@@ -234,10 +262,19 @@ export default function AdminDashboard() {
                     <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                     <Input placeholder="Search employees..." className="pl-9" />
                   </div>
-                  <Button className="bg-orange-500 hover:bg-orange-600">
-                    <UserPlus className="mr-2 h-4 w-4" />
-                    Add Employee
-                  </Button>
+                  <div>
+                    <Button
+                      className="bg-orange-500 hover:bg-orange-600"
+                      onClick={() => setIsModalOpen(true)}
+                    >
+                      <UserPlus className="mr-2 h-4 w-4" />
+                      Add Employee
+                    </Button>
+                    <EmployeeModal
+                      isOpen={isModalOpen}
+                      onClose={() => setIsModalOpen(false)}
+                    />
+                  </div>
                 </div>
               </div>
             </CardHeader>
@@ -261,7 +298,9 @@ export default function AdminDashboard() {
                         <TableCell>
                           <div>
                             <div className="font-medium">{employee.name}</div>
-                            <div className="text-sm text-gray-500">{employee.email}</div>
+                            <div className="text-sm text-gray-500">
+                              {employee.email}
+                            </div>
                           </div>
                         </TableCell>
                         <TableCell>{employee.department}</TableCell>
@@ -270,7 +309,9 @@ export default function AdminDashboard() {
                         <TableCell>
                           <Badge
                             className={
-                              employee.status === "Active" ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
+                              employee.status === "Active"
+                                ? "bg-green-100 text-green-800"
+                                : "bg-red-100 text-red-800"
                             }
                           >
                             {employee.status}
@@ -286,5 +327,5 @@ export default function AdminDashboard() {
         </main>
       </div>
     </div>
-  )
+  );
 }
