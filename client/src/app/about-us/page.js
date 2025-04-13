@@ -6,7 +6,7 @@ import Link from "next/link"
 export default function AboutUs() {
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Hero Section with Parallax Effect */}
+     
       <div className="relative h-[500px] overflow-hidden">
         <Image
           src="https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=2069"
