@@ -161,7 +161,7 @@ export default function AdminDashboard() {
               </Button>
               <Button variant="ghost" className="w-full justify-start">
                 <UserPlus className="mr-2 h-5 w-5" />
-                Add Employee
+                Mark attendance
               </Button>
               <Button variant="ghost" className="w-full justify-start">
                 <Settings className="mr-2 h-5 w-5" />
