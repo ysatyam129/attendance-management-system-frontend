@@ -19,7 +19,7 @@ export default function Home() {
                 <Button className="bg-orange-600 hover:bg-orange-700">Admin Portal</Button>
               </Link>
               <Link href="/employee/login">
-                <Button className="bg-green-600 hover:bg-green-700">Employee Portal</Button>
+                <Button className="bg-green-600 hover:bg-green-700 ">Employee Portal</Button>
               </Link>
             </div>
           </div>
