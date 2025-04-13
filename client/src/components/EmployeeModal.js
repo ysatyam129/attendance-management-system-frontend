@@ -1,17 +1,18 @@
 import { useState } from "react";
 import { X } from "lucide-react";
+import Axios from "../../utils/Axios";
 
 export default function EmployeeModal({ isOpen, onClose }) {
   const [employeeData, setEmployeeData] = useState({
     employeeId: "",
-    fullName: "",
+    fullname: "",
     email: "",
-    phone: "",
-    designation: "",
+    phoneNumber: "",
+     designations: "",
     department: "",
     joiningDate: "",
-    employmentType: "Full-time",
-    shift: "Morning",
+    employeeType: "Full-time",
+    shiftDetails: "Morning",
   });
 
   const handleChange = (e) => {
@@ -22,9 +23,14 @@ export default function EmployeeModal({ isOpen, onClose }) {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     console.log("Employee Data Submitted:", employeeData);
+    try {
+      const response=await Axios.post("/register-employee",employeeData)
+    } catch (error) {
+      console.log(error)
+    }
     // Here you would typically send data to your backend
     onClose();
   };
@@ -70,8 +76,8 @@ export default function EmployeeModal({ isOpen, onClose }) {
               </label>
               <input
                 type="text"
-                name="fullName"
-                value={employeeData.fullName}
+                name="fullname"
+                value={employeeData.fullname}
                 onChange={handleChange}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 required
@@ -93,30 +99,30 @@ export default function EmployeeModal({ isOpen, onClose }) {
               />
             </div>
 
-            {/* Phone */}
+            {/* phoneNumber */}
             <div className="col-span-1">
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Phone Number
+                phoneNumber
               </label>
               <input
                 type="tel"
-                name="phone"
-                value={employeeData.phone}
+                name="phoneNumber"
+                value={employeeData.phoneNumber}
                 onChange={handleChange}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 required
               />
             </div>
 
-            {/* Designation */}
+            {/*  designations */}
             <div className="col-span-1">
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Designation / Job Title
+                 designations / Job Title
               </label>
               <input
                 type="text"
-                name="designation"
-                value={employeeData.designation}
+                name="designations"
+                value={employeeData.designations}
                 onChange={handleChange}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 required
@@ -159,8 +165,8 @@ export default function EmployeeModal({ isOpen, onClose }) {
                 Employment Type
               </label>
               <select
-                name="employmentType"
-                value={employeeData.employmentType}
+                name="employeeType"
+                value={employeeData.employeeType}
                 onChange={handleChange}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 required
@@ -171,14 +177,14 @@ export default function EmployeeModal({ isOpen, onClose }) {
               </select>
             </div>
 
-            {/* Shift */}
+            {/* shiftDetails */}
             <div className="col-span-1">
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Shift
+                shiftDetails
               </label>
               <select
-                name="shift"
-                value={employeeData.shift}
+                name="shiftDetails"
+                value={employeeData.shiftDetails}
                 onChange={handleChange}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 required
