@@ -4,11 +4,10 @@ import { useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { Eye, EyeOff, Mail, Lock } from "lucide-react"
-
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "../../../components/ui/button"
+import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import {Label} from "@/components/ui/label"
+import { Label } from "@/components/ui/label"
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 
 export default function EmployeeLogin() {
   const [showPassword, setShowPassword] = useState(false)
@@ -60,7 +59,7 @@ export default function EmployeeLogin() {
               <div className="flex items-center justify-between">
                 <Label htmlFor="password">Password</Label>
                 <Link
-                  href="/employee/forgot-password"
+                  href="/auth/employee/forgot-password"
                   className="text-sm font-medium text-blue-600 hover:text-blue-500"
                 >
                   Forgot password?
