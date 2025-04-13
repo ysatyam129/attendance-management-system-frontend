@@ -3,6 +3,7 @@ import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useRouter } from 'next/navigation';
 
 
 import {
@@ -15,7 +16,8 @@ import {
     Menu,
     X,
   } from "lucide-react";
-const sidebar = () => {
+const Sidebar = () => {
+  const router = useRouter();
   return (
     
       
@@ -33,9 +35,9 @@ const sidebar = () => {
               <Users className="mr-2 h-5 w-5" />
               Employees
             </Button>
-            <Button variant="ghost" className="justify-start">
+            <Button variant="ghost" className="justify-start" onClick={() => router.push('/admin/markattendance')}>
               <UserPlus className="mr-2 h-5 w-5" />
-              Add Employee
+              Mark attendance
             </Button>
             <Button variant="ghost" className="justify-start">
               <Settings className="mr-2 h-5 w-5" />
@@ -56,4 +58,4 @@ const sidebar = () => {
   )
 }
 
-export default sidebar
+export default Sidebar

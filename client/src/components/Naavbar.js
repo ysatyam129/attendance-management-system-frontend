@@ -19,7 +19,7 @@ import {
 
 
 
-const navbar = () => {
+const Navbar = () => {
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -56,4 +56,4 @@ const navbar = () => {
   )
 }
 
-export default navbar
+export default Navbar
