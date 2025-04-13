@@ -90,9 +90,12 @@ export default function AdminDashboard() {
   ];
 
   return (
-    <div className="flex h-screen bg-gray-100 text-black">
+    <div className="flex bg-gray-100 text-black">
+
+
+
       {/* Sidebar - Desktop */}
-      <div className="hidden md:flex md:w-64 md:flex-col">
+      {/* <div className="hidden md:flex md:w-64 md:flex-col">
         <div className="flex flex-col flex-grow pt-5 overflow-y-auto bg-white border-r">
           <div className="flex items-center flex-shrink-0 px-4">
             <div className="h-8 w-8 rounded-full bg-orange-500 flex items-center justify-center text-white font-bold">
@@ -123,7 +126,7 @@ export default function AdminDashboard() {
             </Link>
           </div>
         </div>
-      </div>
+      </div> */}
 
       {/* Mobile menu */}
       <div
@@ -181,7 +184,7 @@ export default function AdminDashboard() {
 
       <div className="flex flex-col flex-1 overflow-hidden">
         {/* Top navigation */}
-        <div className="bg-slate-200 shadow-sm z-10 ">
+        {/* <div className="bg-slate-200 shadow-sm z-10 ">
           <div className="px-4 sm:px-6 lg:px-8">
             <div className="flex items-center justify-between h-16">
               <div className="flex items-center ">
@@ -207,7 +210,7 @@ export default function AdminDashboard() {
               </div>
             </div>
           </div>
-        </div>
+        </div> */}
 
         {/* Main content area */}
         <main className="flex-1 overflow-y-auto bg-gray-100 p-4 sm:p-6 lg:p-8">
