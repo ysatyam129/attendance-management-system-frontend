@@ -5,9 +5,9 @@ import { useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { Eye, EyeOff, Mail, Lock } from "lucide-react"
-import Axios from "../../../../utils/Axios"
+import Axios from "../../../../../utils/Axios"
 import {toast} from "sonner"
-import { Button } from "@/components/ui/button" 
+import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import {Label} from "@/components/ui/label"
 import { Card,CardContent,CardDescription,CardHeader,CardTitle,CardFooter  } from "@/components/ui/card"
@@ -74,7 +74,7 @@ export default function AdminLogin() {
            <div className="space-y-2">
              <div className="flex items-center justify-between ">
                <Label htmlFor="password">Password</Label>
-               <Link href="/admin/forgot-password" className="text-sm font-medium text-blue-600 hover:text-blue-500">
+               <Link href="/auth/admin/forgot-password" className="text-sm font-medium text-blue-600 hover:text-blue-500">
                  Forgot password?
                </Link>
              </div>
@@ -105,7 +105,7 @@ export default function AdminLogin() {
        <CardFooter className="flex justify-center">
          <p className="text-sm text-gray-600">
            Don&apos;t have an account?{" "}
-           <Link href="/admin/signup" className="font-medium text-blue-600 hover:text-blue-500">
+           <Link href="/auth/admin/signup" className="font-medium text-blue-600 hover:text-blue-500">
              Sign up
            </Link>
          </p>
