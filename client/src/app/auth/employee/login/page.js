@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-
+import Axios from "utils/Axios"
 export default function EmployeeLogin() {
   const [showPassword, setShowPassword] = useState(false)
   const [email, setEmail] = useState("")
@@ -19,9 +19,10 @@ export default function EmployeeLogin() {
     e.preventDefault()
     // Here you would implement actual authentication logic
     console.log("Employee login attempt:", { email, password })
-
+    const response = await Axios.post("/employee/employee-login" ,{ email, password})
+    if (response.status === 200 ){router.push("/employee/dashboard")}
     // For demo purposes, just redirect to employee dashboard
-    router.push("/employee/dashboard")
+    
   }
 
   return (

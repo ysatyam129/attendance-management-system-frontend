@@ -66,14 +66,14 @@
   }
 }
 
-@layer base {
+/* @layer base {
   * {
     @apply border-border;
   }
   body {
     @apply bg-background text-foreground;
   }
-}
+} */
 @layer utilities {
   .transition-theme {
     transition-property: background-color, border-color, color, fill, stroke;
