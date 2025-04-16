@@ -4,6 +4,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 
 import { Button } from "@/components/ui/button"
 import { BackgroundBoxesDemo } from "@/components/bg"
+import { TestimonialsSection } from "@/components/testimonials-with-marquee"
 
 export default function Home() {
   return (
@@ -69,7 +70,7 @@ export default function Home() {
         </div>
       </div>
 
-      {}
+      <TestimonialsSection/>
       <footer className="bg-gray-800 text-white py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <p>&copy; 2024 Employee Management System. All rights reserved.</p>
