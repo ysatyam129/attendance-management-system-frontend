@@ -119,7 +119,7 @@ export default function AdminSignup() {
       
       // Allow toast to show before redirect
       setTimeout(() => {
-        router.push("/admin/login")
+        router.push("/auth/admin/login")
       }, 2000)
     }
     catch (error) {

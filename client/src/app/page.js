@@ -3,6 +3,8 @@ import Image from "next/image"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 
 import { Button } from "@/components/ui/button"
+import { BackgroundBoxesDemo } from "@/components/bg"
+import { TestimonialsSection } from "@/components/testimonials-with-marquee"
 
 export default function Home() {
   return (
@@ -29,10 +31,12 @@ export default function Home() {
         </div>
       </nav>
 
+      <BackgroundBoxesDemo />
+
       {/* Hero Section with Background Image */}
-      <div className="relative h-[600px]">
+      {/* <div className="relative h-[600px]">
         <Image
-          src="https://images.unsplash.com/photo-1472289065668-ce650ac443d2?q=80&w=2069&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+          src="https://images.unsplash.com/photo-1472289065668-ce650ac443d2?q=80&w=2069&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" 
           alt="Office background"
           fill
           className="object-cover"
@@ -44,7 +48,7 @@ export default function Home() {
             <p className="text-xl">Streamline your workforce management with our comprehensive solution</p>
           </div>
         </div>
-      </div>
+      </div> */}
 
       {/* Content Sections */}
       <div className="py-16 bg-white">
@@ -66,8 +70,7 @@ export default function Home() {
         </div>
       </div>
 
-
-      { }
+      <TestimonialsSection/>
       <footer className="bg-gray-800 text-white py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <p>&copy; 2024 Employee Management System. All rights reserved.</p>
