@@ -1,19 +1,19 @@
 "use client"
 import { useState, useRef, useEffect } from 'react';
 import { Search, Sun, LogOut, ChevronDown, Calendar, ArrowLeft, ArrowRight, X } from 'lucide-react';
+import Axios from 'utils/Axios';
 
 export default function EmployeeAttendance() {
-  const [employees, setEmployees] = useState([
-    { id: 'lavalesh', name: 'Lavalesh Counter', position: 'manager', status: 'Mark', note: '' },
-    { id: 'rohit', name: 'Rohit Yadav', position: 'cashier', status: 'Mark', note: '' },
-    { id: 'kirti', name: 'Kirti Yadav Counter', position: 'waiter',status: 'Mark', note: '' },
-    { id: 'anand', name: 'anand', position: 'manager',status: 'Mark', note: '' },
-    { id: 'ajay', name: 'Ajay Counter', position: 'waiter', status: 'Mark', note: '' },   
-    { id: 'sachin', name: 'Sachin Jaiswal', position: 'manager', status: 'Mark', note: '' },
-    { id: 'vijayhelper', name: 'Vijay Helper', position: 'chef', status: 'Mark', note: '' },
-    { id: 'jagdish', name: 'Jagdish', position: 'chef', status: 'Mark', note: '' },
-    { id: 'sagar', name: 'Sagar Kaka', position: 'sweeper', status: 'Mark', note: '' }
-  ]);
+  const [employees, setEmployees] = useState([]);
+  // { id: 'lavalesh', name: 'Lavalesh Counter', position: 'manager', status: 'Mark', note: '' },
+  // { id: 'rohit', name: 'Rohit Yadav', position: 'cashier', status: 'Mark', note: '' },
+  // { id: 'kirti', name: 'Kirti Yadav Counter', position: 'waiter',status: 'Mark', note: '' },
+  // { id: 'anand', name: 'anand', position: 'manager',status: 'Mark', note: '' },
+  // { id: 'ajay', name: 'Ajay Counter', position: 'waiter', status: 'Mark', note: '' },   
+  // { id: 'sachin', name: 'Sachin Jaiswal', position: 'manager', status: 'Mark', note: '' },
+  // { id: 'vijayhelper', name: 'Vijay Helper', position: 'chef', status: 'Mark', note: '' },
+  // { id: 'jagdish', name: 'Jagdish', position: 'chef', status: 'Mark', note: '' },
+  // { id: 'sagar', name: 'Sagar Kaka', position: 'sweeper', status: 'Mark', note: '' }
   
   const [searchQuery, setSearchQuery] = useState('');
   const [openDropdownId, setOpenDropdownId] = useState(null);
@@ -21,19 +21,30 @@ export default function EmployeeAttendance() {
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [showNoteModal, setShowNoteModal] = useState(false);
   const [currentEmployee, setCurrentEmployee] = useState(null);
-  const [note, setNote] = useState('');
-  const [attendanceHistory, setAttendanceHistory] = useState([
-    { date: '2025-04-11', records: [
-      { id: 'lavalesh', name: 'Lavalesh Counter', position: 'manager', status: 'Present', note: 'Arrived on time' },
-      { id: 'rohit', name: 'Rohit Yadav', position: 'cashier', status: 'Present', note: '' },
-      { id: 'kirti', name: 'Kirti Yadav Counter', position: 'waiter', status: 'Absent', note: 'Sick leave' },
-    ]},
-    { date: '2025-04-10', records: [
-      { id: 'lavalesh', name: 'Lavalesh Counter', position: 'manager', status: 'Present', note: '' },
-      { id: 'rohit', name: 'Rohit Yadav', position: 'cashier', status: 'Late', note: 'Bus delayed' },
-      { id: 'kirti', name: 'Kirti Yadav Counter', position: 'waiter', status: 'Present', note: '' },
-    ]},
-  ]);
+  const [remarks, setRemarks] = useState('');
+  const [attendanceHistory, setAttendanceHistory] = useState([]);
+  // { date: '2025-04-11', records: [
+  //   { id: 'lavalesh', name: 'Lavalesh Counter', position: 'manager', status: 'Present', note: 'Arrived on time' },
+  //   { id: 'rohit', name: 'Rohit Yadav', position: 'cashier', status: 'Present', note: '' },
+  //   { id: 'kirti', name: 'Kirti Yadav Counter', position: 'waiter', status: 'Absent', note: 'Sick leave' },
+  // ]},
+  // { date: '2025-04-10', records: [
+  //   { id: 'lavalesh', name: 'Lavalesh Counter', position: 'manager', status: 'Present', note: '' },
+  //   { id: 'rohit', name: 'Rohit Yadav', position: 'cashier', status: 'Late', note: 'Bus delayed' },
+  //   { id: 'kirti', name: 'Kirti Yadav Counter', position: 'waiter', status: 'Present', note: '' },
+  // ]},
+
+  const employeeDetails = async () => {
+    const response = await Axios.get("/get-employee-details");
+    console.log("Employee details:", response.data.data);
+    if (response.status===200) {
+      setEmployees(response.data.data.employees)
+    }
+  }
+
+  useEffect(() => {
+    employeeDetails();
+  }, []);
   
   const [selectedDate, setSelectedDate] = useState('');
   const dropdownRef = useRef(null);
@@ -41,7 +52,7 @@ export default function EmployeeAttendance() {
   
   const handleStatusChange = (employeeId, newStatus) => {
     setEmployees(employees.map(emp => 
-      emp.id === employeeId ? { ...emp, status: newStatus } : emp
+      emp.employeeId === employeeId ? { ...emp, attendanceStatus: newStatus } : emp
     ));
     setOpenDropdownId(null);
   };
@@ -52,56 +63,59 @@ export default function EmployeeAttendance() {
 
   const openNoteModal = (employee) => {
     setCurrentEmployee(employee);
-    setNote(employee.note);
+    setRemarks(employee.note);
     setShowNoteModal(true);
   };
 
   const saveNote = () => {
     if (currentEmployee) {
       setEmployees(employees.map(emp => 
-        emp.id === currentEmployee.id ? { ...emp, note: note } : emp
+        emp.employeeId === currentEmployee.id ? { ...emp, remarks: remarks } : emp
       ));
     }
     setShowNoteModal(false);
   };
 
-  const saveAttendance = () => {
+  const saveAttendance =  () => {
     // Check if all statuses are marked
-    const unmarkedEmployees = employees.filter(emp => emp.status === 'Mark');
+    const unmarkedEmployees = employees.filter(emp => emp.attendanceStatus === 'Mark');
     if (unmarkedEmployees.length > 0) {
       if (!confirm(`${unmarkedEmployees.length} employees haven't been marked. Continue anyway?`)) {
         return;
       }
-    }
-    
+    }    
     setShowConfirmation(true);
   };
 
-  const confirmSaveAttendance = () => {
+  const confirmSaveAttendance = async () => {
     // Prepare data for backend
     const currentDate = new Date().toISOString().split('T')[0];
     const attendanceData = {
       date: currentDate,
       records: employees.map(emp => ({
-        employeeId: emp.id,
-        status: emp.status === 'Mark' ? 'Absent' : emp.status, // Default unmarked to absent
-        note: emp.note
+        employeeId: emp._id,
+        attendanceStatus: emp.attendanceStatus === 'Mark' ? 'Absent' : emp.attendanceStatus, // Default unmarked to absent
+        remarks: emp.remarks
       }))
     };
+    console.log('Sending to backend:', attendanceData);
     
     // Here you would send data to backend
-    console.log('Sending to backend:', attendanceData);
+    const response = await Axios.post("/mark-attendance",{
+      attendanceData
+    });
+   
     
     // Add to history for demo purposes
     setAttendanceHistory([
       { 
         date: currentDate, 
         records: employees.map(emp => ({
-          id: emp.id,
-          name: emp.name,
-          position: emp.position,
-          status: emp.status === 'Mark' ? 'Absent' : emp.status,
-          note: emp.note
+          employeeId: emp._id,
+          fullname: emp.fullname,
+          designation: emp.designation,
+          attendanceStatus: emp.attendanceStatus === 'Mark' ? 'Absent' : emp.attendanceStatus,
+          remarks: emp.remarks
         }))
       },
       ...attendanceHistory
@@ -111,7 +125,9 @@ export default function EmployeeAttendance() {
     setShowConfirmation(false);
     
     // Show success message
-    alert('Attendance saved successfully!');
+    if(response.status === 200){
+      alert('Attendance saved successfully!');
+    }
   };
   
   // Close dropdown when clicking outside
@@ -134,16 +150,16 @@ export default function EmployeeAttendance() {
   }, []);
   
   const filteredEmployees = employees.filter(emp => 
-    emp.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    emp.position.toLowerCase().includes(searchQuery.toLowerCase())
+    emp.fullname.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    emp.designation.toLowerCase().includes(searchQuery.toLowerCase())
   );
   
   // Calculate attendance statistics
   const totalEmployees = employees.length;
-  const presentEmployees = employees.filter(emp => emp.status === 'Present').length;
-  const absentEmployees = employees.filter(emp => emp.status === 'Absent').length;
-  const lateEmployees = employees.filter(emp => emp.status === 'Late').length;
-  const unmarkedEmployees = employees.filter(emp => emp.status === 'Mark').length;
+  const presentEmployees = employees.filter(emp => emp.attendanceStatus === 'Present').length;
+  const absentEmployees = employees.filter(emp => emp.attendanceStatus === 'Absent').length;
+  const lateEmployees = employees.filter(emp => emp.attendanceStatus === 'Late').length;
+  const unmarkedEmployees = employees.filter(emp => emp.attendanceStatus === 'Mark').length;
 
   // Find history record for selected date
   const selectedHistory = attendanceHistory.find(h => h.date === selectedDate)?.records || [];
@@ -274,34 +290,34 @@ export default function EmployeeAttendance() {
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
-                    {filteredEmployees.map((employee) => (
-                      <tr key={employee.id} className="hover:bg-gray-50">
+                    {employees.map((employee) => (
+                      <tr key={employee.employeeId} className="hover:bg-gray-50">
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          {employee.id}
+                          {employee.employeeId}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                          {employee.name}
+                          {employee.fullname}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 capitalize">
-                          {employee.position}
+                          {employee.designation}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          {employee.status === 'Mark' ? (
-                            <div className="relative" ref={openDropdownId === employee.id ? dropdownRef : null}>
+                          {employee.attendanceStatus === 'Mark' ? (
+                            <div className="relative" ref={openDropdownId === employee.employeeId ? dropdownRef : null}>
                               <button
-                                onClick={() => toggleDropdown(employee.id)}
+                                onClick={() => toggleDropdown(employee.employeeId)}
                                 className="px-3 py-1 border border-gray-300 rounded text-sm flex items-center"
                               >
                                 Mark
                                 <ChevronDown size={16} className="ml-1" />
                               </button>
                               
-                              {openDropdownId === employee.id && (
+                              {openDropdownId === employee.employeeId && (
                                 <div className="absolute mt-1 w-32 bg-white shadow-lg rounded-md border border-gray-200 z-10">
                                   <ul>
                                     <li>
                                       <button
-                                        onClick={() => handleStatusChange(employee.id, 'Present')}
+                                        onClick={() => handleStatusChange(employee.employeeId, 'Present')}
                                         className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                                       >
                                         Present
@@ -309,7 +325,7 @@ export default function EmployeeAttendance() {
                                     </li>
                                     <li>
                                       <button
-                                        onClick={() => handleStatusChange(employee.id, 'Absent')}
+                                        onClick={() => handleStatusChange(employee.employeeId, 'Absent')}
                                         className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                                       >
                                         Absent
@@ -317,7 +333,7 @@ export default function EmployeeAttendance() {
                                     </li>
                                     <li>
                                       <button
-                                        onClick={() => handleStatusChange(employee.id, 'Late')}
+                                        onClick={() => handleStatusChange(employee.employeeId, 'Late')}
                                         className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                                       >
                                         Late
@@ -329,10 +345,10 @@ export default function EmployeeAttendance() {
                             </div>
                           ) : (
                             <span className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
-                              ${employee.status === 'Present' ? 'bg-green-100 text-green-800' : 
-                                employee.status === 'Absent' ? 'bg-red-100 text-red-800' : 
+                              ${employee.attendanceStatus === 'Present' ? 'bg-green-100 text-green-800' : 
+                                employee.attendanceStatus === 'Absent' ? 'bg-red-100 text-red-800' : 
                                 'bg-yellow-100 text-yellow-800'}`}>
-                              {employee.status}
+                              {employee.attendanceStatus}
                             </span>
                           )}
                         </td>
@@ -342,7 +358,7 @@ export default function EmployeeAttendance() {
                             onClick={() => openNoteModal(employee)}
                             data-note-btn="true"
                           >
-                            {employee.note ? 'Edit Note' : 'Add Note'}
+                            {employee.remarks ? 'Edit Note' : 'Add Note'}
                           </button>
                         </td>
                       </tr>
@@ -427,7 +443,7 @@ export default function EmployeeAttendance() {
                         </tr>
                       </thead>
                       <tbody className="bg-white divide-y divide-gray-200">
-                        {selectedHistory.map((employee) => (
+                        {employees.map((employee) => (
                           <tr key={employee.id} className="hover:bg-gray-50">
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                               {employee.id}
@@ -486,8 +502,8 @@ export default function EmployeeAttendance() {
             <textarea
               className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 h-32"
               placeholder="Enter note here..."
-              value={note}
-              onChange={(e) => setNote(e.target.value)}
+              value={remarks}
+              onChange={(e) => setRemarks(e.target.value)}
             ></textarea>
             <div className="mt-4 flex justify-end space-x-3">
               <button 

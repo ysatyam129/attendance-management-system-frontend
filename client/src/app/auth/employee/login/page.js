@@ -9,21 +9,24 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import Axios from "utils/Axios"
+import { toast } from "sonner"
 export default function EmployeeLogin() {
   const [showPassword, setShowPassword] = useState(false)
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const router = useRouter()
-
   const handleLogin = async (e) => {
-    e.preventDefault()
-    // Here you would implement actual authentication logic
-    console.log("Employee login attempt:", { email, password })
-    const response = await Axios.post("/employee/employee-login" ,{ email, password})
-    if (response.status === 200 ){router.push("/employee/dashboard")}
-    // For demo purposes, just redirect to employee dashboard
-    
-  }
+    e.preventDefault();
+    try {
+      const response = await Axios.post("/employee/employee-login", { email, password });
+      toast.success("Login successful");
+      router.push("/employee/dashboard");
+    } catch (error) {
+      toast.error("Invalid credentials");
+      console.error("Login error:", error);
+    }
+  };
+  
 
   return (
     <div className="flex min-h-screen items-center justify-center py-12 px-4 sm:px-6 lg:px-8 text-black bg-green-300">
