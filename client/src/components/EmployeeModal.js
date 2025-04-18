@@ -8,7 +8,7 @@ export default function EmployeeModal({ isOpen, onClose }) {
     fullname: "",
     email: "",
     phoneNumber: "",
-     designations: "",
+     designation: "",
     department: "",
     joiningDate: "",
     employeeType: "Full-time",
@@ -114,15 +114,15 @@ export default function EmployeeModal({ isOpen, onClose }) {
               />
             </div>
 
-            {/*  designations */}
+            {/*  designation */}
             <div className="col-span-1">
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                 designations / Job Title
+                 designation / Job Title
               </label>
               <input
                 type="text"
-                name="designations"
-                value={employeeData.designations}
+                name="designation"
+                value={employeeData.designation}
                 onChange={handleChange}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 required
