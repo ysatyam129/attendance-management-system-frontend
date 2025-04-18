@@ -2,18 +2,23 @@ import { useState } from "react";
 import { X } from "lucide-react";
 import Axios from "../../utils/Axios";
 
-export default function EmployeeModal({ isOpen, onClose }) {
+export default function EmployeeModal({ isOpen, onClose, onEmployeeAdded }) {
   const [employeeData, setEmployeeData] = useState({
     employeeId: "",
     fullname: "",
     email: "",
-    phoneNumber: "",
-     designation: "",
+    phone: "",
+    designation: "",
     department: "",
     joiningDate: "",
-    employeeType: "Full-time",
+    employeeType: "Full-Time",
     shiftDetails: "Morning",
+    password: "default123", // Default password for new employees
+    status: "active"
   });
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState("");
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -25,14 +30,39 @@ export default function EmployeeModal({ isOpen, onClose }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Employee Data Submitted:", employeeData);
+    setIsSubmitting(true);
+    setError("");
+    
     try {
-      const response=await Axios.post("/register-employee",employeeData)
+      const response = await Axios.post("/register-employee", employeeData);
+      console.log("Employee registered successfully:", response.data);
+      // Reset form
+      setEmployeeData({
+        employeeId: "",
+        fullname: "",
+        email: "",
+        phone: "",
+        designation: "",
+        department: "",
+        joiningDate: "",
+        employeeType: "Full-Time",
+        shiftDetails: "Morning",
+        password: "default123",
+        status: "active"
+      });
+      
+      // Notify parent component about new employee
+      if (onEmployeeAdded) {
+        onEmployeeAdded(response.data.data);
+      }
+      
+      onClose();
     } catch (error) {
-      console.log(error)
+      console.error("Error registering employee:", error);
+      setError(error.response?.data?.message || "Failed to register employee");
+    } finally {
+      setIsSubmitting(false);
     }
-    // Here you would typically send data to your backend
-    onClose();
   };
 
   if (!isOpen) return null;
@@ -53,6 +83,12 @@ export default function EmployeeModal({ isOpen, onClose }) {
         </div>
 
         <form onSubmit={handleSubmit} className="p-6">
+          {error && (
+            <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-md">
+              {error}
+            </div>
+          )}
+          
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Employee ID */}
             <div className="col-span-1">
@@ -102,22 +138,22 @@ export default function EmployeeModal({ isOpen, onClose }) {
             {/* phoneNumber */}
             <div className="col-span-1">
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                phoneNumber
+                Phone Number
               </label>
               <input
                 type="tel"
-                name="phoneNumber"
-                value={employeeData.phoneNumber}
+                name="phone"
+                value={employeeData.phone}
                 onChange={handleChange}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 required
               />
             </div>
 
-            {/*  designation */}
+            {/* designation */}
             <div className="col-span-1">
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                 designation / Job Title
+                Designation / Job Title
               </label>
               <input
                 type="text"
@@ -171,7 +207,7 @@ export default function EmployeeModal({ isOpen, onClose }) {
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 required
               >
-                <option value="Full-time">Full-time</option>
+                <option value="Full-Time">Full-Time</option>
                 <option value="Intern">Intern</option>
                 <option value="Contract">Contract</option>
               </select>
@@ -180,7 +216,7 @@ export default function EmployeeModal({ isOpen, onClose }) {
             {/* shiftDetails */}
             <div className="col-span-1">
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                shiftDetails
+                Shift
               </label>
               <select
                 name="shiftDetails"
@@ -193,6 +229,23 @@ export default function EmployeeModal({ isOpen, onClose }) {
                 <option value="Night">Night</option>
               </select>
             </div>
+            
+            {/* Status */}
+            <div className="col-span-1">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Status
+              </label>
+              <select
+                name="status"
+                value={employeeData.status}
+                onChange={handleChange}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                required
+              >
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
+              </select>
+            </div>
           </div>
 
           <div className="mt-6 flex justify-end space-x-3">
@@ -200,14 +253,16 @@ export default function EmployeeModal({ isOpen, onClose }) {
               type="button"
               onClick={onClose}
               className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              disabled={isSubmitting}
             >
               Cancel
             </button>
             <button
               type="submit"
               className="px-4 py-2 border border-transparent rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              disabled={isSubmitting}
             >
-              Save Employee
+              {isSubmitting ? "Saving..." : "Save Employee"}
             </button>
           </div>
         </form>
