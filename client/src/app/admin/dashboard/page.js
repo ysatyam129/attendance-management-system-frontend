@@ -2,8 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import Axios from "utils/Axios"
-
+import Axios from "utils/Axios";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -34,7 +33,8 @@ import {
   X,
 } from "lucide-react";
 import EmployeeModal from "@/components/EmployeeModal";
-
+import EditDetails from "@/components/EditDetails";
+import DeleteModal from "@/components/DeleteModal";
 
 export default function AdminDashboard() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -43,7 +43,10 @@ export default function AdminDashboard() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
+  const [selectedEmployee, setSelectedEmployee] = useState(null);
 
+  const [isModaEditDetailsOpen, setIsModaEditDetailsOpen] = useState(false);
+  const [isModalDeleteOpen, setIsModalDeleteOpen] = useState(false);
   // Fetch employees on component mount
   useEffect(() => {
     fetchEmployees();
@@ -184,7 +187,7 @@ export default function AdminDashboard() {
               </CardHeader>
               <CardContent>
                 <div className="text-3xl font-bold">
-                  {new Set(employees.map(e => e.department)).size}
+                  {new Set(employees.map((e) => e.department)).size}
                 </div>
               </CardContent>
             </Card>
@@ -200,9 +203,9 @@ export default function AdminDashboard() {
                 <div className="flex flex-col sm:flex-row gap-2">
                   <div className="relative">
                     <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                    <Input 
-                      placeholder="Search employees..." 
-                      className="pl-9" 
+                    <Input
+                      placeholder="Search employees..."
+                      className="pl-9"
                       value={searchTerm}
                       onChange={handleSearchChange}
                     />
@@ -230,7 +233,7 @@ export default function AdminDashboard() {
                   {error}
                 </div>
               )}
-              
+
               {isLoading ? (
                 <div className="text-center py-8">Loading employees...</div>
               ) : (
@@ -244,13 +247,16 @@ export default function AdminDashboard() {
                         <TableHead>Designation</TableHead>
                         <TableHead>Employment Type</TableHead>
                         <TableHead>Status</TableHead>
+                        <TableHead>Actions</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
                       {filteredEmployees.length === 0 ? (
                         <TableRow>
                           <TableCell colSpan={6} className="text-center py-4">
-                            {searchTerm ? "No employees match your search" : "No employees found"}
+                            {searchTerm
+                              ? "No employees match your search"
+                              : "No employees found"}
                           </TableCell>
                         </TableRow>
                       ) : (
@@ -259,14 +265,16 @@ export default function AdminDashboard() {
                             <TableCell>{employee.employeeId}</TableCell>
                             <TableCell>
                               <div>
-                                <div className="font-medium">{employee.fullname}</div>
+                                <div className="font-medium">
+                                  {employee.fullname}
+                                </div>
                                 <div className="text-sm text-gray-500">
                                   {employee.email}
                                 </div>
                               </div>
                             </TableCell>
                             <TableCell>{employee.department}</TableCell>
-                            <TableCell>{employee.designations}</TableCell>
+                            <TableCell>{employee.designation}</TableCell>
                             <TableCell>{employee.employeeType}</TableCell>
                             <TableCell>
                               <Badge
@@ -276,14 +284,59 @@ export default function AdminDashboard() {
                                     : "bg-red-100 text-red-800"
                                 }
                               >
-                                {employee.status === "active" ? "Active" : "Inactive"}
+                                {employee.status === "active"
+                                  ? "Active"
+                                  : "Inactive"}
                               </Badge>
+                            </TableCell>
+
+                            <TableCell>
+                              <Button
+                                className="btn bg-green-400 hover:bg-green-700"
+                                onClick={() => {
+                                  setSelectedEmployee(employee); // Store the full employee object
+                                  setIsModaEditDetailsOpen(true);
+                                }}
+                              >
+                                Edit
+                              </Button>
+                              <Button className="btn bg-red-400 hover:bg-red-700"
+                              onClick={() => {
+                                setSelectedEmployee(employee); // Store the full employee object
+                                setIsModalDeleteOpen(true);
+                              }}
+                              >
+                                Delete
+                              </Button>
                             </TableCell>
                           </TableRow>
                         ))
                       )}
                     </TableBody>
                   </Table>
+                  {isModaEditDetailsOpen && (
+                    <EditDetails
+                      isOpen={isModaEditDetailsOpen}
+                      setIsModaEditDetailsOpen={setIsModaEditDetailsOpen}
+                      employeeDataDetails={selectedEmployee}
+                      onClose={() => {
+                        setIsModaEditDetailsOpen(false);
+                        setSelectedEmployee(null); // Clear the selected employee when closing
+                      }}
+                      onEmployeeAdded={handleEmployeeAdded}
+                    />
+                  )}
+                   {isModalDeleteOpen && (
+                    <DeleteModal
+                      isOpen={isModalDeleteOpen}
+                      setIsModaDeleteModalOpen={setIsModalDeleteOpen}
+                      employeeDataDetails={selectedEmployee}
+                      onClose={() => {
+                        setIsModalDeleteOpen(false);
+                      }}
+                      onEmployeeAdded={handleEmployeeAdded}
+                    />
+                  )}
                 </div>
               )}
             </CardContent>
