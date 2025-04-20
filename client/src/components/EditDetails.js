@@ -1,22 +1,35 @@
 import { useState } from "react";
 import { X } from "lucide-react";
 import Axios from "../../utils/Axios";
-
-export default function EmployeeModal({ isOpen, onClose, onEmployeeAdded }) {
-  const [employeeData, setEmployeeData] = useState({
-    employeeId: "",
-    fullname: "",
-    email: "",
-    phone: "",
-    designation: "",
-    department: "",
-    joiningDate: "",
-    employeeType: "Full-Time",
-    shiftDetails: "Morning",
-    password: "default123", // Default password for new employees
-    status: "active"
-  });
-
+import { useEffect } from "react";
+export default function EditDetails({ isOpen, setIsModaEditDetailsOpen, employeeDataDetails, onClose, onEmployeeAdded }) {
+    const [employeeData, setEmployeeData] = useState({
+        fullname: employeeDataDetails?.fullname || "",
+        email: employeeDataDetails?.email || "",
+        phone: employeeDataDetails?.phone || "",
+        designation: employeeDataDetails?.designation || "",
+        department: employeeDataDetails?.department || "",
+        joiningDate: employeeDataDetails?.joiningDate || "",
+        employeeType: employeeDataDetails?.employeeType || "Full-Time",
+        shiftDetails: employeeDataDetails?.shiftDetails || "Morning",
+        status: employeeDataDetails?.status || "active"
+      });
+      useEffect(() => {
+        if (employeeDataDetails) {
+          setEmployeeData({
+            fullname: employeeDataDetails.fullname || "",
+            email: employeeDataDetails.email || "",
+            phone: employeeDataDetails.phone || "",
+            designation: employeeDataDetails.designation || "",
+            department: employeeDataDetails.department || "",
+            joiningDate: employeeDataDetails.joiningDate || "",
+            employeeType: employeeDataDetails.employeeType || "Full-Time",
+            shiftDetails: employeeDataDetails.shiftDetails || "Morning",
+            status: employeeDataDetails.status || "active"
+          });
+        }
+      }, [employeeDataDetails]);
+ 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
 
@@ -34,32 +47,17 @@ export default function EmployeeModal({ isOpen, onClose, onEmployeeAdded }) {
     setError("");
     
     try {
-      const response = await Axios.post("/register-employee", employeeData);
-      console.log("Employee registered successfully:", response.data);
-      // Reset form
-      setEmployeeData({
-        employeeId: "",
-        fullname: "",
-        email: "",
-        phone: "",
-        designation: "",
-        department: "",
-        joiningDate: "",
-        employeeType: "Full-Time",
-        shiftDetails: "Morning",
-        password: "default123",
-        status: "active"
-      });
+      const response = await Axios.put(`/update-employee/${employeeDataDetails._id}`, employeeData);
+     
       
-      // Notify parent component about new employee
       if (onEmployeeAdded) {
         onEmployeeAdded(response.data.data);
       }
       
       onClose();
     } catch (error) {
-      console.error("Error registering employee:", error);
-      setError(error.response?.data?.message || "Failed to register employee");
+      console.error("Error updating employee:", error);
+      setError(error.response?.data?.message || "Failed to update employee");
     } finally {
       setIsSubmitting(false);
     }
@@ -72,7 +70,7 @@ export default function EmployeeModal({ isOpen, onClose, onEmployeeAdded }) {
       <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl mx-4">
         <div className="flex items-center justify-between p-4 border-b">
           <h2 className="text-xl font-semibold text-gray-800">
-            Added Employee Information
+            Employee Information
           </h2>
           <button
             onClick={onClose}
@@ -90,21 +88,6 @@ export default function EmployeeModal({ isOpen, onClose, onEmployeeAdded }) {
           )}
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {/* Employee ID */}
-            <div className="col-span-1">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Employee ID
-              </label>
-              <input
-                type="text"
-                name="employeeId"
-                value={employeeData.employeeId}
-                onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                required
-              />
-            </div>
-
             {/* Full Name */}
             <div className="col-span-1">
               <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -262,7 +245,7 @@ export default function EmployeeModal({ isOpen, onClose, onEmployeeAdded }) {
               className="px-4 py-2 border border-transparent rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
               disabled={isSubmitting}
             >
-              {isSubmitting ? "Saving..." : "Save Employee"}
+              {isSubmitting ? "Saving..." : "Save Changes"}
             </button>
           </div>
         </form>
