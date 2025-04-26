@@ -1,28 +1,43 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Calendar, Clock, FileText, Home, LogOut, Settings, Bell, Menu, X, User } from "lucide-react"
+import { Calendar, Clock, Home, LogOut, Settings, Bell, Menu, X, User } from "lucide-react"
+import Axios from "utils/Axios"
 
 export default function EmployeeDashboard() {
+  
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+    
+  const [employee , setEmployee] = useState({
 
-  // Mock employee data
-  const employee = {
-    id: "EMP001",
-    name: "John Doe",
-    email: "john.doe@example.com",
-    phone: "+1 (555) 123-4567",
-    designation: "Software Engineer",
-    department: "Engineering",
-    joiningDate: "2023-01-15",
-    employmentType: "Full-time",
-    shift: "Morning",
-    status: "Active",
+    employeeId: "",
+    fullname: "",
+    email: "",
+    phone: "",
+    designation: "",
+    department: "",
+    joiningDate: "",
+    employmentType: "",
+    shift: "",
+    status: "",
+  })
+
+  const getEmployeeData = async () => {
+    try {
+      const response = await Axios.get("/employee/profile")
+     console.log(response.data)
+      setEmployee(response.data.data)
+    } catch (error) {
+      console.error("Error fetching employee data:", error)
+    }
   }
-
+  useEffect(() => {
+    getEmployeeData()
+  }
+  , []) 
   return (
     <div className="flex h-screen bg-gray-100 text-black">
       {/* Sidebar - Desktop */}
@@ -39,21 +54,19 @@ export default function EmployeeDashboard() {
               <Home className="mr-2 h-5 w-5" />
               Dashboard
             </Button>
-            <Button variant="ghost" className="justify-start">
-              <Calendar className="mr-2 h-5 w-5" />
-              Attendance
-            </Button>
-            <Button variant="ghost" className="justify-start">
-              <FileText className="mr-2 h-5 w-5" />
-              Documents
-            </Button>
-            <Button variant="ghost" className="justify-start">
+            <Link href="/employee/applyforleave" className="w-full">
+              <Button variant="ghost" className="justify-start w-full ">
+                <Calendar className="mr-2 h-5 w-5" />
+                Apply for Leave
+              </Button>
+            </Link>
+            {/* <Button variant="ghost" className="justify-start">
               <Settings className="mr-2 h-5 w-5" />
               Settings
-            </Button>
+            </Button> */}
           </div>
           <div className="p-4">
-            <Link href="/employee/login">
+            <Link href="/auth/employee/login">
               <Button variant="outline" className="w-full justify-start">
                 <LogOut className="mr-2 h-5 w-5" />
                 Logout
@@ -87,14 +100,12 @@ export default function EmployeeDashboard() {
                 <Home className="mr-2 h-5 w-5" />
                 Dashboard
               </Button>
-              <Button variant="ghost" className="w-full justify-start">
-                <Calendar className="mr-2 h-5 w-5" />
-                Attendance
-              </Button>
-              <Button variant="ghost" className="w-full justify-start">
-                <FileText className="mr-2 h-5 w-5" />
-                Documents
-              </Button>
+              <Link href="/employee/attendance" className="w-full">
+                <Button variant="ghost" className="w-full justify-start">
+                  <Calendar className="mr-2 h-5 w-5" />
+                  Apply for Leave
+                </Button>
+              </Link>
               <Button variant="ghost" className="w-full justify-start">
                 <Settings className="mr-2 h-5 w-5" />
                 Settings
@@ -133,7 +144,7 @@ export default function EmployeeDashboard() {
                 </button>
                 <div className="ml-3 relative">
                   <div className="h-8 w-8 rounded-full bg-green-500 flex items-center justify-center text-white font-bold">
-                    {employee.name.charAt(0)}
+                    {employee.fullname.charAt(0)}
                   </div>
                 </div>
               </div>
@@ -144,7 +155,7 @@ export default function EmployeeDashboard() {
         {/* Main content area */}
         <main className="flex-1 overflow-y-auto bg-gray-100 p-4 sm:p-6 lg:p-8">
           <div className="mb-6">
-            <h2 className="text-2xl font-bold">Welcome, {employee.name}</h2>
+            <h2 className="text-2xl font-bold">Welcome, {employee.fullname}</h2>
             <p className="text-gray-600">
               {employee.designation} - {employee.department}
             </p>
@@ -158,7 +169,7 @@ export default function EmployeeDashboard() {
               </CardHeader>
               <CardContent className="flex items-center">
                 <Clock className="h-5 w-5 mr-2 text-green-500" />
-                <span>{employee.shift} Shift (9:00 AM - 5:00 PM)</span>
+                <span>{employee.shiftDetails}</span>
               </CardContent>
             </Card>
 
@@ -170,7 +181,7 @@ export default function EmployeeDashboard() {
               <CardContent className="flex items-center">
                 <User className="h-5 w-5 mr-2 text-green-500" />
                 <span>
-                  {employee.employmentType} - {employee.status}
+                  {employee.employeeType} - {employee.status}
                 </span>
               </CardContent>
             </Card>
@@ -203,11 +214,11 @@ export default function EmployeeDashboard() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <h3 className="text-sm font-medium text-gray-500">Employee ID</h3>
-                    <p>{employee.id}</p>
+                    <p>{employee.employeeId}</p>
                   </div>
                   <div>
                     <h3 className="text-sm font-medium text-gray-500">Full Name</h3>
-                    <p>{employee.name}</p>
+                    <p>{employee.fullname}</p>
                   </div>
                   <div>
                     <h3 className="text-sm font-medium text-gray-500">Email</h3>
