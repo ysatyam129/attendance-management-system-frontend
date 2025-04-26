@@ -100,7 +100,7 @@ export default function EmployeeDashboard() {
                 <Home className="mr-2 h-5 w-5" />
                 Dashboard
               </Button>
-              <Link href="/employee/attendance" className="w-full">
+              <Link href="/employee/applyforleave" className="w-full">
                 <Button variant="ghost" className="w-full justify-start">
                   <Calendar className="mr-2 h-5 w-5" />
                   Apply for Leave

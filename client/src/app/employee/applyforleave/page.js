@@ -162,28 +162,28 @@ function CustomCalendar({
 }
 
 export default function ApplyForLeavePage() {
-    const [isAuthorized, setIsAuthorized] = useState(false);
+    // const [isAuthorized, setIsAuthorized] = useState(false);
   
-    useEffect(() => {
-      const verifyAccess = async () => {
-        try {
-          const hasAccess = await checkAccess();
-          if (!hasAccess) {
-            window.location.href = "/auth/employee/login";
-          } else {
-            setIsAuthorized(true);
-          }
-        } catch (error) {
-          console.error("Access check failed:", error);
-          window.location.href = "/auth/employee/login";
-        }
-      };
-      verifyAccess();
-    }, []);
+    // useEffect(() => {
+    //   const verifyAccess = async () => {
+    //     try {
+    //       const hasAccess = await checkAccess();
+    //       if (!hasAccess) {
+    //         window.location.href = "/auth/employee/login";
+    //       } else {
+    //         setIsAuthorized(true);
+    //       }
+    //     } catch (error) {
+    //       console.error("Access check failed:", error);
+    //       window.location.href = "/auth/employee/login";
+    //     }
+    //   };
+    //   verifyAccess();
+    // }, []);
   
-    if (!isAuthorized) {
-      return null; 
-    }
+    // if (!isAuthorized) {
+    //   return null; 
+    // }
   const [isLeaveFormOpen, setIsLeaveFormOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [selectedLeaveId, setSelectedLeaveId] = useState(null);
