@@ -2,18 +2,10 @@
 import { useState, useRef, useEffect } from 'react';
 import { Search, Sun, LogOut, ChevronDown, Calendar, ArrowLeft, ArrowRight, X } from 'lucide-react';
 import Axios from 'utils/Axios';
+import AttendanceHistory from '@/components/AttendancehHistory';
 
 export default function EmployeeAttendance() {
   const [employees, setEmployees] = useState([]);
-  // { id: 'lavalesh', name: 'Lavalesh Counter', position: 'manager', status: 'Mark', note: '' },
-  // { id: 'rohit', name: 'Rohit Yadav', position: 'cashier', status: 'Mark', note: '' },
-  // { id: 'kirti', name: 'Kirti Yadav Counter', position: 'waiter',status: 'Mark', note: '' },
-  // { id: 'anand', name: 'anand', position: 'manager',status: 'Mark', note: '' },
-  // { id: 'ajay', name: 'Ajay Counter', position: 'waiter', status: 'Mark', note: '' },   
-  // { id: 'sachin', name: 'Sachin Jaiswal', position: 'manager', status: 'Mark', note: '' },
-  // { id: 'vijayhelper', name: 'Vijay Helper', position: 'chef', status: 'Mark', note: '' },
-  // { id: 'jagdish', name: 'Jagdish', position: 'chef', status: 'Mark', note: '' },
-  // { id: 'sagar', name: 'Sagar Kaka', position: 'sweeper', status: 'Mark', note: '' }
   
   const [searchQuery, setSearchQuery] = useState('');
   const [openDropdownId, setOpenDropdownId] = useState(null);
@@ -23,20 +15,10 @@ export default function EmployeeAttendance() {
   const [currentEmployee, setCurrentEmployee] = useState(null);
   const [remarks, setRemarks] = useState('');
   const [attendanceHistory, setAttendanceHistory] = useState([]);
-  // { date: '2025-04-11', records: [
-  //   { id: 'lavalesh', name: 'Lavalesh Counter', position: 'manager', status: 'Present', note: 'Arrived on time' },
-  //   { id: 'rohit', name: 'Rohit Yadav', position: 'cashier', status: 'Present', note: '' },
-  //   { id: 'kirti', name: 'Kirti Yadav Counter', position: 'waiter', status: 'Absent', note: 'Sick leave' },
-  // ]},
-  // { date: '2025-04-10', records: [
-  //   { id: 'lavalesh', name: 'Lavalesh Counter', position: 'manager', status: 'Present', note: '' },
-  //   { id: 'rohit', name: 'Rohit Yadav', position: 'cashier', status: 'Late', note: 'Bus delayed' },
-  //   { id: 'kirti', name: 'Kirti Yadav Counter', position: 'waiter', status: 'Present', note: '' },
-  // ]},
 
   const employeeDetails = async () => {
     const response = await Axios.get("/get-employee-details");
-    console.log("Employee details:", response.data.data);
+    console.log("Employee details: ", response.data.data);
     if (response.status===200) {
       setEmployees(response.data.data.employees)
     }
@@ -44,6 +26,18 @@ export default function EmployeeAttendance() {
 
   useEffect(() => {
     employeeDetails();
+  }, []);
+
+  const emplyeeAtttendanceHistory = async () => {
+    const response = await Axios.get("/get-attendance-history");
+    console.log("Attendance history: ", response.data.data);
+    if (response.status===200) {
+      setAttendanceHistory(response.data.data)
+    }
+  }
+
+  useEffect(() => {
+    emplyeeAtttendanceHistory();
   }, []);
   
   const [selectedDate, setSelectedDate] = useState('');
@@ -162,10 +156,10 @@ export default function EmployeeAttendance() {
   const unmarkedEmployees = employees.filter(emp => emp.attendanceStatus === 'Mark').length;
 
   // Find history record for selected date
-  const selectedHistory = attendanceHistory.find(h => h.date === selectedDate)?.records || [];
+  // const selectedHistory = attendanceHistory.find(h => h.date === selectedDate)?.records || [];
   
   return (
-    <div className="flex flex-col min-h-screen bg-gray-100">
+    <div className="flex flex-col min-h-screen bg-gray-100 ">
      
       
       <main className="container mx-auto px-4 py-6 flex-grow">
@@ -191,7 +185,14 @@ export default function EmployeeAttendance() {
             <div className="mb-6 flex justify-between items-center">
               <div>
                 <h2 className="text-2xl font-bold text-gray-800">Employee Attendance</h2>
-                <p className="text-sm text-gray-500">Saturday, April 12, 2025</p>
+                <p className="text-sm text-gray-500">
+                  {new Date().toLocaleDateString('en-US', {
+                    weekday: 'long',
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                  })}
+                </p>
               </div>
               <div className="flex space-x-3">
                 <button className="px-4 py-2 border border-gray-300 rounded text-sm text-gray-700 bg-white hover:bg-gray-50">
@@ -250,7 +251,7 @@ export default function EmployeeAttendance() {
                       </div>
                     </div>
                     <div className="relative">
-                      <select className="appearance-none pl-4 pr-10 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white">
+                      <select className="appearance-none pl-4 pr-10 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-black">
                         <option>All Positions</option>
                         <option>Manager</option>
                         <option>Cashier</option>
@@ -370,114 +371,7 @@ export default function EmployeeAttendance() {
           </>
         ) : (
           // History Tab
-          <>
-            <div className="mb-6 flex justify-between items-center">
-              <div>
-                <h2 className="text-2xl font-bold text-gray-800">Attendance History</h2>
-                <p className="text-sm text-gray-500">View past attendance records</p>
-              </div>
-              <div className="flex space-x-3">
-                <button className="px-4 py-2 border border-gray-300 rounded text-sm text-gray-700 bg-white hover:bg-gray-50 flex items-center">
-                  <Calendar size={16} className="mr-2" />
-                  Select Date
-                </button>
-                <button className="px-4 py-2 border border-gray-300 rounded text-sm text-gray-700 bg-white hover:bg-gray-50">
-                  Export
-                </button>
-              </div>
-            </div>
-            
-            <div className="mb-6">
-              <div className="bg-white p-4 rounded-lg border border-gray-200">
-                <div className="flex items-center justify-between mb-4">
-                  <button className="text-gray-500 hover:text-gray-700">
-                    <ArrowLeft size={20} />
-                  </button>
-                  <div className="flex space-x-2">
-                    {attendanceHistory.map((record, index) => (
-                      <button
-                        key={record.date}
-                        className={`px-3 py-1 text-sm rounded-md ${selectedDate === record.date ? 
-                          'bg-gray-800 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
-                        onClick={() => setSelectedDate(record.date)}
-                      >
-                        {new Date(record.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-                      </button>
-                    ))}
-                  </div>
-                  <button className="text-gray-500 hover:text-gray-700">
-                    <ArrowRight size={20} />
-                  </button>
-                </div>
-                
-                {selectedDate ? (
-                  <div className="overflow-x-auto">
-                    <div className="mb-4">
-                      <h3 className="text-lg font-medium text-gray-800">
-                        {new Date(selectedDate).toLocaleDateString('en-US', { 
-                          weekday: 'long', 
-                          year: 'numeric', 
-                          month: 'long', 
-                          day: 'numeric' 
-                        })}
-                      </h3>
-                    </div>
-                    <table className="min-w-full">
-                      <thead className="bg-gray-50 border-b border-gray-200">
-                        <tr>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            #
-                          </th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Name
-                          </th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Position
-                          </th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Status
-                          </th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Notes
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody className="bg-white divide-y divide-gray-200">
-                        {employees.map((employee) => (
-                          <tr key={employee.id} className="hover:bg-gray-50">
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                              {employee.id}
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                              {employee.name}
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 capitalize">
-                              {employee.position}
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap">
-                              <span className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
-                                ${employee.status === 'Present' ? 'bg-green-100 text-green-800' : 
-                                  employee.status === 'Absent' ? 'bg-red-100 text-red-800' : 
-                                  'bg-yellow-100 text-yellow-800'}`}>
-                                {employee.status}
-                              </span>
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                              {employee.note || '-'}
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                ) : (
-                  <div className="text-center py-8 text-gray-500">
-                    Select a date to view attendance records
-                  </div>
-                )}
-              </div>
-            </div>
-          </>
+          <AttendanceHistory historyData={attendanceHistory}/>
         )}
       </main>
 
