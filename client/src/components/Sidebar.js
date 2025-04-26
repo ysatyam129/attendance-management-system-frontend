@@ -46,7 +46,7 @@ const Sidebar = () => {
             <span className="ml-2 text-xl font-semibold">Admin Portal</span>
           </div>
           <div className="mt-8 flex flex-col flex-1 px-3 space-y-1">
-            <Button variant="ghost" className="justify-start">
+            <Button variant="ghost" className="justify-start"onClick={() => router.push('/admin/dashboard')}>
               <Users className="mr-2 h-5 w-5" />
               Employees
             </Button>
