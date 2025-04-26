@@ -257,7 +257,7 @@ export default function EmployeeAttendance() {
                       </div>
                     </div>
                     <div className="relative">
-                      <select className="appearance-none pl-4 pr-10 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white">
+                      <select className="appearance-none pl-4 pr-10 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-black">
                         <option>All Positions</option>
                         <option>Manager</option>
                         <option>Employee</option>

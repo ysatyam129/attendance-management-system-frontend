@@ -16,8 +16,23 @@ import {
     Menu,
     X,
   } from "lucide-react";
+import Axios from 'utils/Axios';
 const Sidebar = () => {
   const router = useRouter();
+  const logout =async () => {
+    try {
+      const response = await Axios.post("/logout");
+      if (response.status === 200) {
+        window.location.href = "/auth/admin/login";
+      } else {
+        console.error("Logout failed:", response.data.message);
+      }
+    } catch (error) {
+      console.error("Error during logout:", error);
+    }
+  }
+
+  
   return (
     
       
@@ -39,18 +54,20 @@ const Sidebar = () => {
               <UserPlus className="mr-2 h-5 w-5" />
               Mark attendance
             </Button>
+            <Button variant="ghost" className="justify-start" onClick={() => router.push('/admin/leave-notification')}>
+              <UserPlus className="mr-2 h-5 w-5" />
+              leavenotification
+            </Button>
             <Button variant="ghost" className="justify-start">
               <Settings className="mr-2 h-5 w-5" />
               Settings
             </Button>
           </div>
           <div className="p-4">
-            <Link href="/admin/login">
-              <Button variant="outline" className="w-full justify-start">
+              <Button variant="outline" className="w-full justify-start" onClick={() => logout()}>
                 <LogOut className="mr-2 h-5 w-5" />
                 Logout
               </Button>
-            </Link>
           </div>
         </div>
       </div>
