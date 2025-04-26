@@ -4,6 +4,7 @@ import { ChevronLeft, ChevronRight, Clock, ChevronDown, Download, Upload, ArrowR
 import AttendanceHistoryDetailsModal from './AttendanceHistoryDetailsModal';
 
 export default function AttendanceHistory({ historyData }) {
+  console.log("historyData", historyData);
   const [selectedMonth, setSelectedMonth] = useState('');
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [currentAttendanceData, setCurrentAttendanceData] = useState([]);
@@ -25,6 +26,7 @@ export default function AttendanceHistory({ historyData }) {
       console.error("No complete data found for the selected date.");
       return;
     }
+    console.log("completeData", completeData);
     setSelectedAttendanceDetails(completeData);
     setIsModalOpen(true);
   };
@@ -342,13 +344,13 @@ export default function AttendanceHistory({ historyData }) {
                 </div>
               )}
             </div>
-            <button 
+            {/* <button 
               className="bg-white border border-gray-300 rounded-lg px-4 py-2 flex items-center hover:bg-gray-50"
               disabled={currentAttendanceData.length === 0}
             >
               <Download size={16} className="mr-2 text-blue-600" />
               Export Report
-            </button>
+            </button> */}
           </div>
         </div>
         
