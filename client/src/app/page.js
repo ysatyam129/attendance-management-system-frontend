@@ -26,6 +26,9 @@ export default function Home() {
               <Link href="/auth/employee/login">
                 <Button className="bg-green-600 hover:bg-green-700 ">Employee Portal</Button>
               </Link>
+              <Link href="contactus">
+                <Button className="bg-green-600 hover:bg-green-700 ">Contact Us</Button>
+              </Link>
             </div>
           </div>
         </div>

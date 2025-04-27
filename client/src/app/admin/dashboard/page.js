@@ -31,10 +31,14 @@ import {
   Bell,
   Menu,
   X,
+  Trash2,
+  Pencil,
 } from "lucide-react";
 import EmployeeModal from "@/components/EmployeeModal";
 import EditDetails from "@/components/EditDetails";
 import DeleteModal from "@/components/DeleteModal";
+
+// import { Trash2 } from 'lucide-react';
 
 export default function AdminDashboard() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -290,24 +294,24 @@ export default function AdminDashboard() {
                               </Badge>
                             </TableCell>
 
-                            <TableCell>
-                              <Button
-                                className="btn bg-green-400 hover:bg-green-700"
+                            <TableCell className="flex gap-3 justify-center">
+                             
+                               <Pencil
+                                className="h-5 w-5 text-orange-600 hover:text-orange-800 cursor-pointer"
                                 onClick={() => {
                                   setSelectedEmployee(employee); // Store the full employee object
                                   setIsModaEditDetailsOpen(true);
+                                }} 
+                               />
+                            
+                              <Trash2 
+                                className="h-5 w-5 text-red-500 hover:text-red-700 cursor-pointer"
+                                onClick={() => {
+                                  setSelectedEmployee(employee); // Store the full employee object
+                                  setIsModalDeleteOpen(true);
                                 }}
-                              >
-                                Edit
-                              </Button>
-                              <Button className="btn bg-red-400 hover:bg-red-700"
-                              onClick={() => {
-                                setSelectedEmployee(employee); // Store the full employee object
-                                setIsModalDeleteOpen(true);
-                              }}
-                              >
-                                Delete
-                              </Button>
+                              />
+
                             </TableCell>
                           </TableRow>
                         ))

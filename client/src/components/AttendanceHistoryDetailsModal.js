@@ -18,6 +18,7 @@ export default function AttendanceHistoryDetailsModal({
   });
   const [attendanceHistory, setAttendanceHistory] = useState([]);
   const [selectedDate, setSelectedDate] = useState("");
+  console.log("employeeDataDetails", employeeDataDetails);
 
   // Process attendance data when modal opens
   useEffect(() => {
@@ -38,6 +39,7 @@ export default function AttendanceHistoryDetailsModal({
       if (data && data.date && Array.isArray(data.records)) {
         // Set the selected date
         setSelectedDate(data.date);
+        console.log("data.records", data.records);
         
         // Format records for display
         const formattedRecords = data.records.map(record => ({
