@@ -25,7 +25,7 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
+// import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 
@@ -372,7 +372,7 @@ export default function ApplyForLeavePage() {
   return (
     <div className="flex h-screen bg-gray-100 text-black">
       {/* Sidebar - Desktop */}
-      <div className="hidden md:flex md:w-64 md:flex-col">
+      {/* <div className="hidden md:flex md:w-64 md:flex-col">
         <div className="flex flex-col flex-grow pt-5 overflow-y-auto bg-white border-r">
           <div className="flex items-center flex-shrink-0 px-4">
             <div className="h-8 w-8 rounded-full bg-green-500 flex items-center justify-center text-white font-bold">
@@ -393,10 +393,9 @@ export default function ApplyForLeavePage() {
                 Apply for Leave
               </Button>
             </Link>
-            {/* <Button variant="ghost" className="justify-start">
-              <Settings className="mr-2 h-5 w-5" />
-              Settings
-            </Button> */}
+            <Button variant="ghost" className="w-full justify-start">
+                  Attendance Record
+                </Button>
           </div>
           <div className="p-4">
             <Link href="/auth/employee/login">
@@ -407,10 +406,10 @@ export default function ApplyForLeavePage() {
             </Link>
           </div>
         </div>
-      </div>
+      </div> */}
 
       {/* Mobile menu */}
-      <div
+      {/* <div
         className={`fixed inset-0 z-40 md:hidden ${
           isMobileMenuOpen ? "block" : "hidden"
         }`}
@@ -460,12 +459,12 @@ export default function ApplyForLeavePage() {
               </Button>
           </div>
         </div>
-      </div>
+      </div> */}
 
       {/* Main content */}
       <div className="flex flex-col flex-1 overflow-hidden">
         {/* Top navigation */}
-        <div className="bg-white shadow-sm z-10">
+        {/* <div className="bg-white shadow-sm z-10">
           <div className="px-4 sm:px-6 lg:px-8">
             <div className="flex items-center justify-between h-16">
               <div className="flex items-center">
@@ -481,7 +480,7 @@ export default function ApplyForLeavePage() {
               </div>
             </div>
           </div>
-        </div>
+        </div> */}
 
         {/* Main content area */}
         <div className="flex-1 overflow-y-auto bg-gray-100 p-4 sm:p-6 lg:p-8 text-black">

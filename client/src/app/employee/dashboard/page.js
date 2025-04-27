@@ -8,10 +8,10 @@ import { Calendar, Clock, Home, LogOut, Settings, Bell, Menu, X, User } from "lu
 import Axios from "utils/Axios"
 
 export default function EmployeeDashboard() {
-  
+
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
-    
-  const [employee , setEmployee] = useState({
+
+  const [employee, setEmployee] = useState({
 
     employeeId: "",
     fullname: "",
@@ -20,7 +20,7 @@ export default function EmployeeDashboard() {
     designation: "",
     department: "",
     joiningDate: "",
-    employmentType: "",
+    employeeType: "",
     shift: "",
     status: "",
   })
@@ -28,7 +28,7 @@ export default function EmployeeDashboard() {
   const getEmployeeData = async () => {
     try {
       const response = await Axios.get("/employee/profile")
-     console.log(response.data)
+      console.log(response.data)
       setEmployee(response.data.data)
     } catch (error) {
       console.error("Error fetching employee data:", error)
@@ -37,11 +37,11 @@ export default function EmployeeDashboard() {
   useEffect(() => {
     getEmployeeData()
   }
-  , []) 
+    , [])
   return (
     <div className="flex h-screen bg-gray-100 text-black">
       {/* Sidebar - Desktop */}
-      <div className="hidden md:flex md:w-64 md:flex-col">
+      {/* <div className="hidden md:flex md:w-64 md:flex-col">
         <div className="flex flex-col flex-grow pt-5 overflow-y-auto bg-white border-r">
           <div className="flex items-center flex-shrink-0 px-4">
             <div className="h-8 w-8 rounded-full bg-green-500 flex items-center justify-center text-white font-bold">
@@ -60,10 +60,10 @@ export default function EmployeeDashboard() {
                 Apply for Leave
               </Button>
             </Link>
-            {/* <Button variant="ghost" className="justify-start">
-              <Settings className="mr-2 h-5 w-5" />
-              Settings
-            </Button> */}
+            <Button variant="ghost" className="w-full justify-start">
+              <Clock className="mr-2 h-5 w-5" />
+              Attendance Record
+            </Button>
           </div>
           <div className="p-4">
             <Link href="/auth/employee/login">
@@ -74,10 +74,10 @@ export default function EmployeeDashboard() {
             </Link>
           </div>
         </div>
-      </div>
+      </div> */}
 
       {/* Mobile menu */}
-      <div className={`fixed inset-0 z-40 md:hidden ${isMobileMenuOpen ? "block" : "hidden"}`}>
+      {/* <div className={`fixed inset-0 z-40 md:hidden ${isMobileMenuOpen ? "block" : "hidden"}`}>
         <div className="fixed inset-0 bg-gray-600 bg-opacity-75" onClick={() => setIsMobileMenuOpen(false)}></div>
         <div className="relative flex-1 flex flex-col max-w-xs w-full bg-white">
           <div className="absolute top-0 right-0 -mr-12 pt-2">
@@ -106,10 +106,12 @@ export default function EmployeeDashboard() {
                   Apply for Leave
                 </Button>
               </Link>
-              <Button variant="ghost" className="w-full justify-start">
-                <Settings className="mr-2 h-5 w-5" />
-                Settings
-              </Button>
+              <Link href="/employee/AttendanceRecord" className="w-full">
+                <Button variant="ghost" className="w-full justify-start">
+                  <Clock className="mr-2 h-5 w-5" />
+                  Attendance Record
+                </Button>
+              </Link>
             </nav>
           </div>
           <div className="flex-shrink-0 flex border-t border-gray-200 p-4">
@@ -121,7 +123,7 @@ export default function EmployeeDashboard() {
             </Link>
           </div>
         </div>
-      </div>
+      </div> */}
 
       {/* Main content */}
       <div className="flex flex-col flex-1 overflow-hidden">
@@ -140,7 +142,7 @@ export default function EmployeeDashboard() {
               </div>
               <div className="flex items-center">
                 <button className="p-1 rounded-full text-gray-400 hover:text-gray-500 focus:outline-none">
-                  <Bell className="h-6 w-6" />
+                  {/* <Bell className="h-6 w-6" /> */}
                 </button>
                 <div className="ml-3 relative">
                   <div className="h-8 w-8 rounded-full bg-green-500 flex items-center justify-center text-white font-bold">

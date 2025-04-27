@@ -37,7 +37,6 @@ import {
 import Axios from "utils/Axios";
 
 export default function LeaveNotificationsPage() {
-  
   const [leaveApplications, setLeaveApplications] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
@@ -231,22 +230,42 @@ export default function LeaveNotificationsPage() {
                   onChange={handleSearchChange}
                 />
               </div>
-              <div className="min-w-40 text-black">
+              <div className="min-w-40 relative">
                 <Select
                   value={statusFilter}
                   onValueChange={handleStatusFilterChange}
                 >
-                  <SelectTrigger className="w-full text-black">
+                  <SelectTrigger className="w-full bg-white border border-gray-200 text-black">
                     <div className="flex items-center text-black">
-                      <Filter className="h-4 w-4 mr-2 text-black" />
+                      <Filter className="h-4 w-4 mr-2 text-gray-500" />
                       <SelectValue placeholder="Filter by status" />
                     </div>
                   </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Status</SelectItem>
-                    <SelectItem value="pending">Pending</SelectItem>
-                    <SelectItem value="approved">Approved</SelectItem>
-                    <SelectItem value="rejected">Rejected</SelectItem>
+                  <SelectContent className="bg-white z-50">
+                    <SelectItem
+                      value="all"
+                      className="text-black hover:bg-gray-100"
+                    >
+                      All Status
+                    </SelectItem>
+                    <SelectItem
+                      value="pending"
+                      className="text-black hover:bg-gray-100"
+                    >
+                      Pending
+                    </SelectItem>
+                    <SelectItem
+                      value="approved"
+                      className="text-black hover:bg-gray-100"
+                    >
+                      Approved
+                    </SelectItem>
+                    <SelectItem
+                      value="rejected"
+                      className="text-black hover:bg-gray-100"
+                    >
+                      Rejected
+                    </SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -307,7 +326,6 @@ export default function LeaveNotificationsPage() {
                         <TableCell>{leave.department}</TableCell>
                         <TableCell>
                           <div className="flex items-center">
-                           
                             <div className="flex items-center space-x-2">
                               <span className="px-2 py-1 bg-gray-50 rounded-md border border-gray-200">
                                 {formatDate(leave.startDate)}
@@ -333,8 +351,8 @@ export default function LeaveNotificationsPage() {
                               leave.status === "Approved"
                                 ? "bg-green-100 text-green-800"
                                 : leave.status === "Rejected"
-                                  ? "bg-red-100 text-red-800"
-                                  : "bg-yellow-100 text-yellow-800"
+                                ? "bg-red-100 text-red-800"
+                                : "bg-yellow-100 text-yellow-800"
                             }
                           >
                             {leave.status}
@@ -391,7 +409,7 @@ export default function LeaveNotificationsPage() {
 
       {/* Leave Details Modal */}
       <Dialog open={detailsOpen} onOpenChange={setDetailsOpen}>
-        <DialogContent className="bg-white sm:max-w-md text-black">
+        <DialogContent className="bg-white sm:max-w-[800px] text-black">
           <DialogHeader>
             <DialogTitle className="text-xl font-semibold">
               Leave Request Details
@@ -401,47 +419,53 @@ export default function LeaveNotificationsPage() {
           {selectedLeave && (
             <div className="space-y-4">
               <div className="bg-gray-50 p-4 rounded-lg">
-                <div className="flex justify-between items-center mb-2">
-                  <h3 className="font-medium">Employee Information</h3>
+                <div className="flex justify-between items-center mb-4">
+                  <h3 className="font-medium text-lg">Employee Information</h3>
                   <Badge
                     className={
                       selectedLeave.status === "Approved"
                         ? "bg-green-100 text-green-800"
                         : selectedLeave.status === "Rejected"
-                          ? "bg-red-100 text-red-800"
-                          : "bg-yellow-100 text-yellow-800"
+                        ? "bg-red-100 text-red-800"
+                        : "bg-yellow-100 text-yellow-800"
                     }
                   >
                     {selectedLeave.status}
                   </Badge>
                 </div>
-                <div className="grid grid-cols-2 gap-2 text-sm">
-                  <div>
-                    <p className="text-gray-500">Name:</p>
+                <div className="grid grid-cols-2 gap-4 text-sm">
+                  <div className="p-2 bg-white rounded border border-gray-100">
+                    <p className="text-gray-500 mb-1">Name:</p>
                     <p className="font-medium">{selectedLeave.employeeName}</p>
                   </div>
-                  <div>
-                    <p className="text-gray-500">Employee ID:</p>
-                    <p className="font-medium">{selectedLeave.employeeId}</p>
+                  <div className="p-2 bg-white rounded border border-gray-100">
+                    <p className="text-gray-500 mb-1 ">Employee ID:</p>
+                    <p className="font-medium truncate">
+                      {selectedLeave.employeeId}
+                    </p>
                   </div>
-                  <div>
-                    <p className="text-gray-500">Email:</p>
-                    <p className="font-medium">{selectedLeave.employeeEmail}</p>
+                  <div className="p-2 bg-white rounded border border-gray-100">
+                    <p className="text-gray-500 mb-1">Email:</p>
+                    <p className="font-medium  break-words overflow-hidden">
+                      {selectedLeave.employeeEmail}
+                    </p>
                   </div>
-                  <div>
-                    <p className="text-gray-500">Department:</p>
-                    <p className="font-medium">{selectedLeave.department}</p>
+                  <div className="p-2 bg-white rounded border border-gray-100">
+                    <p className="text-gray-500 mb-1">Department:</p>
+                    <p className="font-medium truncate">
+                      {selectedLeave.department}
+                    </p>
                   </div>
-                  <div>
+                  <div className="p-2 bg-white rounded border border-gray-100">
                     <p className="text-gray-500">Employee Type:</p>
                     <p className="font-medium">{selectedLeave.employeeType}</p>
                   </div>
                 </div>
               </div>
 
-              <div className="bg-gray-50 p-4 rounded-lg">
-                <h3 className="font-medium mb-2">Leave Details</h3>
-                <div className="grid grid-cols-2 gap-2 text-sm mb-2">
+              <div className="bg-gray-50 p-6 rounded-lg">
+                <h3 className="font-medium mb-4">Leave Details</h3>
+                <div className="grid grid-cols-3 gap-4 text-sm mb-2">
                   <div>
                     <p className="text-gray-500">From Date:</p>
                     <p className="font-medium">
@@ -462,9 +486,9 @@ export default function LeaveNotificationsPage() {
                     </p>
                   </div>
                 </div>
-                <div className="mt-2">
+                <div className="mt-4">
                   <p className="text-gray-500">Reason for Leave:</p>
-                  <p className="mt-1 p-2 bg-white rounded border border-gray-200">
+                  <p className="mt-2 p-4 bg-white rounded border border-gray-200">
                     {selectedLeave.reason}
                   </p>
                 </div>

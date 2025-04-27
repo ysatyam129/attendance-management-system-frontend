@@ -41,7 +41,7 @@ const Navbar = () => {
               </div>
               <div className="flex items-center">
                 <button className="p-1 rounded-full text-gray-400 hover:text-gray-500 focus:outline-none">
-                  <Bell className="h-6 w-6" />
+                  {/* <Bell className="h-6 w-6" /> */}
                 </button>
                 <div className="ml-3 relative">
                   <div className="h-8 w-8 rounded-full bg-orange-500 flex items-center justify-center text-white font-bold">

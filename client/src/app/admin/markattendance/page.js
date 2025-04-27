@@ -3,6 +3,7 @@ import { useState, useRef, useEffect } from 'react';
 import { Search, Sun, LogOut, ChevronDown, Calendar, ArrowLeft, ArrowRight, X } from 'lucide-react';
 import Axios from 'utils/Axios';
 import AttendanceHistory from '@/components/AttendancehHistory';
+import { toast } from 'sonner';
 
 export default function EmployeeAttendance() {
   const [employees, setEmployees] = useState([]);
@@ -15,6 +16,7 @@ export default function EmployeeAttendance() {
   const [currentEmployee, setCurrentEmployee] = useState(null);
   const [remarks, setRemarks] = useState('');
   const [attendanceHistory, setAttendanceHistory] = useState([]);
+  const [selectedPosition, setSelectedPosition] = useState('All Positions');
 
   const employeeDetails = async () => {
     const response = await Axios.get("/get-employee-details");
@@ -30,7 +32,7 @@ export default function EmployeeAttendance() {
 
   const emplyeeAtttendanceHistory = async () => {
     const response = await Axios.get("/get-attendance-history");
-    console.log("Attendance history: ", response.data.data);
+    console.log("Attendance historyyyyy: ", response.data.data);
     if (response.status===200) {
       setAttendanceHistory(response.data.data)
     }
@@ -70,13 +72,17 @@ export default function EmployeeAttendance() {
     setShowNoteModal(false);
   };
 
-  const saveAttendance =  () => {
+  const saveAttendance = () => {
     // Check if all statuses are marked
     const unmarkedEmployees = employees.filter(emp => emp.attendanceStatus === 'Mark');
     if (unmarkedEmployees.length > 0) {
-      if (!confirm(`${unmarkedEmployees.length} employees haven't been marked. Continue anyway?`)) {
-        return;
-      }
+      toast.error(`${unmarkedEmployees.length} employees haven't been marked!`, {
+        action: {
+          label: 'Continue anyway',
+          onClick: () => setShowConfirmation(true)
+        }
+      });
+      return;
     }    
     setShowConfirmation(true);
   };
@@ -120,7 +126,7 @@ export default function EmployeeAttendance() {
     
     // Show success message
     if(response.status === 200){
-      alert('Attendance saved successfully!');
+      toast.success('Attendance saved successfully!');
     }
   };
   
@@ -143,10 +149,15 @@ export default function EmployeeAttendance() {
     };
   }, []);
   
-  const filteredEmployees = employees.filter(emp => 
-    emp.fullname.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    emp.designation.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredEmployees = employees.filter(emp => {
+    const matchesSearch = emp.fullname.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      emp.designation.toLowerCase().includes(searchQuery.toLowerCase());
+    
+    const matchesPosition = selectedPosition === 'All Positions' || 
+      emp.designation === selectedPosition;
+      
+    return matchesSearch && matchesPosition;
+  });
   
   // Calculate attendance statistics
   const totalEmployees = employees.length;
@@ -158,6 +169,11 @@ export default function EmployeeAttendance() {
   // Find history record for selected date
   // const selectedHistory = attendanceHistory.find(h => h.date === selectedDate)?.records || [];
   
+  const getUniquePositions = () => {
+    const positions = new Set(employees.map(emp => emp.designation));
+    return ['All Positions', ...Array.from(positions)];
+  };
+
   return (
     <div className="flex flex-col min-h-screen bg-gray-100 ">
      
@@ -195,9 +211,9 @@ export default function EmployeeAttendance() {
                 </p>
               </div>
               <div className="flex space-x-3">
-                <button className="px-4 py-2 border border-gray-300 rounded text-sm text-gray-700 bg-white hover:bg-gray-50">
+                {/* <button className="px-4 py-2 border border-gray-300 rounded text-sm text-gray-700 bg-white hover:bg-gray-50">
                   Export
-                </button>
+                </button> */}
                 <button 
                   className="px-4 py-2 bg-gray-800 text-white rounded text-sm hover:bg-gray-700"
                   onClick={saveAttendance}
@@ -230,7 +246,7 @@ export default function EmployeeAttendance() {
               </div>
             </div>
             
-            <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+            <div className="bg-white rounded-lg border border-gray-200">
               <div className="p-6 border-b border-gray-200">
                 <div className="flex justify-between items-center">
                   <div>
@@ -245,19 +261,23 @@ export default function EmployeeAttendance() {
                         className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-64"
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
+                        
                       />
                       <div className="absolute left-3 top-2.5 text-gray-400">
                         <Search size={18} />
                       </div>
                     </div>
                     <div className="relative">
-                      <select className="appearance-none pl-4 pr-10 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-black">
-                        <option>All Positions</option>
-                        <option>Manager</option>
-                        <option>Cashier</option>
-                        <option>Waiter</option>
-                        <option>Chef</option>
-                        <option>Sweeper</option>
+                      <select 
+                        className="appearance-none pl-4 pr-10 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-black"
+                        value={selectedPosition}
+                        onChange={(e) => setSelectedPosition(e.target.value)}
+                      >
+                        {getUniquePositions().map((position) => (
+                          <option key={position} value={position}>
+                            {position}
+                          </option>
+                        ))}
                       </select>
                       <div className="absolute right-3 top-3 pointer-events-none">
                         <svg className="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -269,8 +289,8 @@ export default function EmployeeAttendance() {
                 </div>
               </div>
               
-              <div className="overflow-x-auto">
-                <table className="min-w-full">
+              <div className="relative">
+                <table className="w-full">
                   <thead className="bg-gray-50 border-b border-gray-200">
                     <tr>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -291,7 +311,7 @@ export default function EmployeeAttendance() {
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
-                    {employees.map((employee) => (
+                    {filteredEmployees.map((employee) => (
                       <tr key={employee.employeeId} className="hover:bg-gray-50">
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                           {employee.employeeId}
@@ -302,7 +322,7 @@ export default function EmployeeAttendance() {
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 capitalize">
                           {employee.designation}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
+                        <td className="px-6 py-4 whitespace-nowrap ">
                           {employee.attendanceStatus === 'Mark' ? (
                             <div className="relative" ref={openDropdownId === employee.employeeId ? dropdownRef : null}>
                               <button
