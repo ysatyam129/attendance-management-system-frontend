@@ -80,7 +80,7 @@ export default function AttendanceHistory({ historyData }) {
       const date = new Date(record.date);
       return date.getFullYear() === parseInt(year) && 
              date.toLocaleString('default', { month: 'long' }) === monthName;
-    });
+    },[]);
 
     // Process data to create daily attendance summary
     const dailyAttendance = {};
