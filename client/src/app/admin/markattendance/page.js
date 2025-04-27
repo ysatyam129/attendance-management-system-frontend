@@ -16,6 +16,7 @@ export default function EmployeeAttendance() {
   const [currentEmployee, setCurrentEmployee] = useState(null);
   const [remarks, setRemarks] = useState('');
   const [attendanceHistory, setAttendanceHistory] = useState([]);
+  const [selectedPosition, setSelectedPosition] = useState('All Positions');
 
   const employeeDetails = async () => {
     const response = await Axios.get("/get-employee-details");
@@ -148,10 +149,15 @@ export default function EmployeeAttendance() {
     };
   }, []);
   
-  const filteredEmployees = employees.filter(emp => 
-    emp.fullname.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    emp.designation.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredEmployees = employees.filter(emp => {
+    const matchesSearch = emp.fullname.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      emp.designation.toLowerCase().includes(searchQuery.toLowerCase());
+    
+    const matchesPosition = selectedPosition === 'All Positions' || 
+      emp.designation === selectedPosition;
+      
+    return matchesSearch && matchesPosition;
+  });
   
   // Calculate attendance statistics
   const totalEmployees = employees.length;
@@ -163,6 +169,11 @@ export default function EmployeeAttendance() {
   // Find history record for selected date
   // const selectedHistory = attendanceHistory.find(h => h.date === selectedDate)?.records || [];
   
+  const getUniquePositions = () => {
+    const positions = new Set(employees.map(emp => emp.designation));
+    return ['All Positions', ...Array.from(positions)];
+  };
+
   return (
     <div className="flex flex-col min-h-screen bg-gray-100 ">
      
@@ -257,13 +268,16 @@ export default function EmployeeAttendance() {
                       </div>
                     </div>
                     <div className="relative">
-                      <select className="appearance-none pl-4 pr-10 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-black">
-                        <option>All Positions</option>
-                        <option>Manager</option>
-                        <option>Employee</option>
-                        {/* <option>Waiter</option>
-                        <option>Chef</option>
-                        <option>Sweeper</option> */}
+                      <select 
+                        className="appearance-none pl-4 pr-10 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-black"
+                        value={selectedPosition}
+                        onChange={(e) => setSelectedPosition(e.target.value)}
+                      >
+                        {getUniquePositions().map((position) => (
+                          <option key={position} value={position}>
+                            {position}
+                          </option>
+                        ))}
                       </select>
                       <div className="absolute right-3 top-3 pointer-events-none">
                         <svg className="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -11,7 +11,7 @@ import {
     UserPlus,
     Search,
     LogOut,
-    Settings,
+    // Settings,
     Bell,
     Menu,
     X,
@@ -58,10 +58,7 @@ const Sidebar = () => {
               <UserPlus className="mr-2 h-5 w-5" />
               leavenotification
             </Button>
-            <Button variant="ghost" className="justify-start">
-              <Settings className="mr-2 h-5 w-5" />
-              Settings
-            </Button>
+           
           </div>
           <div className="p-4">
               <Button variant="outline" className="w-full justify-start" onClick={() => logout()}>
