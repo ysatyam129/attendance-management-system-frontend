@@ -1,12 +1,12 @@
 "use client"
-import Axios from "../../../../utils/Axios"
+import Axios from "../../../../../utils/Axios"
 import { useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { Eye, EyeOff, Mail, Lock, User, Phone } from "lucide-react"
-import { Button } from "../../../components/ui/button"
-import { Input } from "../../../components/ui/input"
-import { Label } from "../../../components/ui/label"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { toast, Toaster } from "sonner"
@@ -119,7 +119,7 @@ export default function AdminSignup() {
       
       // Allow toast to show before redirect
       setTimeout(() => {
-        router.push("/admin/login")
+        router.push("/auth/admin/login")
       }, 2000)
     }
     catch (error) {
@@ -263,7 +263,7 @@ export default function AdminSignup() {
         <CardFooter className="flex justify-center">
           <p className="text-sm text-gray-600">
             Already have an account?{" "}
-            <Link href="/admin/login" className="font-medium text-blue-600 hover:text-blue-500">
+            <Link href="/auth/admin/login" className="font-medium text-blue-600 hover:text-blue-500">
               Sign in
             </Link>
           </p>

@@ -4,26 +4,29 @@ import { useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { Eye, EyeOff, Mail, Lock } from "lucide-react"
-
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "../../../components/ui/button"
+import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import {Label} from "@/components/ui/label"
-
+import { Label } from "@/components/ui/label"
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import Axios from "utils/Axios"
+import { toast } from "sonner"
 export default function EmployeeLogin() {
   const [showPassword, setShowPassword] = useState(false)
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const router = useRouter()
-
   const handleLogin = async (e) => {
-    e.preventDefault()
-    // Here you would implement actual authentication logic
-    console.log("Employee login attempt:", { email, password })
-
-    // For demo purposes, just redirect to employee dashboard
-    router.push("/employee/dashboard")
-  }
+    e.preventDefault();
+    try {
+      const response = await Axios.post("/employee/employee-login", { email, password });
+      toast.success("Login successful");
+      router.push("/employee/dashboard");
+    } catch (error) {
+      toast.error("Invalid credentials");
+      console.error("Login error:", error);
+    }
+  };
+  
 
   return (
     <div className="flex min-h-screen items-center justify-center py-12 px-4 sm:px-6 lg:px-8 text-black bg-green-300">
@@ -60,7 +63,7 @@ export default function EmployeeLogin() {
               <div className="flex items-center justify-between">
                 <Label htmlFor="password">Password</Label>
                 <Link
-                  href="/employee/forgot-password"
+                  href="/auth/employee/forgot-password"
                   className="text-sm font-medium text-blue-600 hover:text-blue-500"
                 >
                   Forgot password?

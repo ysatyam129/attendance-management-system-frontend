@@ -3,6 +3,8 @@ import Image from "next/image"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 
 import { Button } from "@/components/ui/button"
+import { BackgroundBoxesDemo } from "@/components/bg"
+import { TestimonialsSection } from "@/components/testimonials-with-marquee"
 
 export default function Home() {
   return (
@@ -15,19 +17,24 @@ export default function Home() {
               <h1 className="text-2xl font-bold text-gray-900">EMS</h1>
             </div>
             <div className="flex space-x-4 items-center">
-              <Link href="/admin/login">
+              <Link href="/about-us">
+                <Button className="bg-blue-600 hover:bg-blue-700">About Us</Button>
+              </Link>
+              <Link href="/auth/admin/login">
                 <Button className="bg-orange-600 hover:bg-orange-700">Admin Portal</Button>
               </Link>
-              <Link href="/employee/login">
-                <Button className="bg-green-600 hover:bg-green-700">Employee Portal</Button>
+              <Link href="/auth/employee/login">
+                <Button className="bg-green-600 hover:bg-green-700 ">Employee Portal</Button>
               </Link>
             </div>
           </div>
         </div>
       </nav>
 
+      <BackgroundBoxesDemo />
+
       {/* Hero Section with Background Image */}
-      <div className="relative h-[600px]">
+      {/* <div className="relative h-[600px]">
         <Image
           src="https://images.unsplash.com/photo-1472289065668-ce650ac443d2?q=80&w=2069&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" 
           alt="Office background"
@@ -41,7 +48,7 @@ export default function Home() {
             <p className="text-xl">Streamline your workforce management with our comprehensive solution</p>
           </div>
         </div>
-      </div>
+      </div> */}
 
       {/* Content Sections */}
       <div className="py-16 bg-white">
@@ -63,7 +70,7 @@ export default function Home() {
         </div>
       </div>
 
-      {}
+      <TestimonialsSection/>
       <footer className="bg-gray-800 text-white py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <p>&copy; 2024 Employee Management System. All rights reserved.</p>
