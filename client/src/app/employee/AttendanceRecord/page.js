@@ -402,7 +402,7 @@ const PersonalEmployeeDashboard = () => {
             </table>
           </div>
           <div className="mt-4 text-right">
-            <button className="text-indigo-600 hover:text-indigo-800 text-sm font-medium transition-colors duration-200">View all activity →</button>
+            {/* <button className="text-indigo-600 hover:text-indigo-800 text-sm font-medium transition-colors duration-200">View all activity →</button> */}
           </div>
         </div>
       </div>

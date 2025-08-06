@@ -98,7 +98,7 @@ export default function EmployeeAttendance() {
         remarks: emp.remarks
       }))
     };
-    console.log('Sending to backend:', attendanceData);
+    // console.log('Sending to backend:', attendanceData);
     
     // Here you would send data to backend
     const response = await Axios.post("/mark-attendance",{

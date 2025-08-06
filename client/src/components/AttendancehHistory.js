@@ -19,16 +19,17 @@ export default function AttendanceHistory({ historyData }) {
   };
 
   const openDetailsModal = (data) => {
-    // Find complete records for this date
-    const formattedDate = new Date(data.date).toLocaleDateString().split('/').reverse().join('-');
-    const completeData = historyData.find(record => record.date === formattedDate);
-    if (!completeData) {
-      console.error("No complete data found for the selected date.");
-      return;
+    // Find the matching record from historyData
+    const matchingRecord = historyData.find(record => 
+      new Date(record.date).toLocaleDateString() === new Date(data.date).toLocaleDateString()
+    );
+
+    if (matchingRecord) {
+      setSelectedAttendanceDetails(matchingRecord);
+      setIsModalOpen(true);
+    } else {
+      console.error("No matching data found for:", data.date);
     }
-    console.log("completeData", completeData);
-    setSelectedAttendanceDetails(completeData);
-    setIsModalOpen(true);
   };
 
   const closeDetailsModal = () => {

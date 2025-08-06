@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -34,6 +34,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 import Axios from "utils/Axios";
 
 export default function LeaveNotificationsPage() {
@@ -45,12 +46,18 @@ export default function LeaveNotificationsPage() {
   const [detailsOpen, setDetailsOpen] = useState(false);
   const [selectedLeave, setSelectedLeave] = useState(null);
   const [isUpdating, setIsUpdating] = useState(false);
+  const prevLeaveIdsRef = useRef(new Set());
+  const [rejectionOpen, setRejectionOpen] = useState(false);
+  const [rejectionReason, setrejectionReason] = useState("");
+  const [pendingRejectionLeaveId, setPendingRejectionLeaveId] = useState(null);
 
   const leaveDetail = async () => {
     try {
       const response = await Axios.get(`/get-leave-history`);
       console.log("Leave history response:", response.data.data);
-      setLeaveApplications(response.data.data || {});
+      
+      // Instead of directly setting state, we'll handle updates more carefully
+      updateLeaveApplications(response.data.data || []);
     } catch (error) {
       console.error("Error fetching leave details:", error);
       setError("Failed to load leave details. Please try again.");
@@ -59,23 +66,66 @@ export default function LeaveNotificationsPage() {
     }
   };
 
+  // Function to update leave applications without causing layout shifts
+  const updateLeaveApplications = (newData) => {
+    setLeaveApplications(prevLeaves => {
+      // Get the current IDs
+      const currentIds = new Set(prevLeaves.map(leave => leave._id));
+      prevLeaveIdsRef.current = currentIds;
+      
+      // Determine which entries are new or existing
+      return newData.map(leave => {
+        // Keep existing objects the same to prevent re-renders
+        const existingLeave = prevLeaves.find(l => l._id === leave._id);
+        if (existingLeave) {
+          // Only update if something has changed
+          if (existingLeave.status !== leave.status) {
+            return { ...existingLeave, ...leave };
+          }
+          return existingLeave;
+        }
+        return leave;
+      });
+    });
+  };
+
   useEffect(() => {
     leaveDetail();
+    
+    // Set up polling for new leave applications
+  
   }, []);
 
-  const handleStatusChange = async (leaveId, newStatus) => {
+  const handleStatusChange = async (leaveId, newStatus, rejectionReason = null) => {
     setIsUpdating(true);
     try {
-      await Axios.patch(`/set-leave-status`, { leaveId, status: newStatus });
+      // Include rejection reason if status is Rejected
+      const payload = { leaveId, status: newStatus };
+      if (newStatus === "Rejected" && rejectionReason) {
+        payload.rejectionReason = rejectionReason;
+      }
+      
+      await Axios.patch(`/set-leave-status`, payload);
 
-      setLeaveApplications((prev) =>
-        prev.map((leave) =>
-          leave.id === leaveId ? { ...leave, status: newStatus } : leave
+      // Update leave status without causing layout shift
+      setLeaveApplications(prev =>
+        prev.map(leave =>
+          leave._id === leaveId 
+            ? { 
+                ...leave, 
+                status: newStatus,
+                ...(newStatus === "Rejected" && rejectionReason ? {rejectionReason } : {})
+              } 
+            : leave
         )
       );
 
-      if (selectedLeave && selectedLeave.id === leaveId) {
-        setSelectedLeave((prev) => ({ ...prev, status: newStatus }));
+      if (selectedLeave && selectedLeave._id === leaveId) {
+        setSelectedLeave((prev) => ({ 
+          ...prev, 
+          status: newStatus,
+          ...(newStatus === "Rejected" && rejectionReason ? { rejectionReason } : {})
+        }));
       }
       setError("");
     } catch (error) {
@@ -83,7 +133,6 @@ export default function LeaveNotificationsPage() {
       setError("Failed to update leave status. Please try again.");
     } finally {
       setIsUpdating(false);
-      leaveDetail();
     }
   };
 
@@ -100,6 +149,27 @@ export default function LeaveNotificationsPage() {
     setDetailsOpen(true);
   };
 
+  const openRejectionDialog = (leaveId) => {
+    setPendingRejectionLeaveId(leaveId);
+    setrejectionReason("");
+    setRejectionOpen(true);
+  };
+
+  const handleReject = () => {
+    if (!rejectionReason.trim()) {
+      setError("Please provide a rejection reason.");
+      return;
+    }
+    
+    handleStatusChange(pendingRejectionLeaveId, "Rejected", rejectionReason);
+    setRejectionOpen(false);
+    
+    // If we're rejecting from the details modal, close it too
+    if (detailsOpen && selectedLeave && selectedLeave._id === pendingRejectionLeaveId) {
+      setDetailsOpen(false);
+    }
+  };
+
   // Filter leave applications based on search term and status filter
   const filteredLeaveApplications = leaveApplications.filter((leave) => {
     const matchesSearch =
@@ -114,11 +184,6 @@ export default function LeaveNotificationsPage() {
 
     return matchesSearch && matchesStatus;
   });
-  console.log("Leave applications", leaveApplications);
-  console.log(
-    "Searched add filtered leave applications",
-    filteredLeaveApplications
-  );
 
   // Count leaves by status
   const pendingCount = leaveApplications.filter(
@@ -285,23 +350,18 @@ export default function LeaveNotificationsPage() {
             </div>
           ) : (
             <div className="overflow-x-auto">
-              <Table>
+              <Table className="table-fixed">
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Employee</TableHead>
-                    <TableHead>Department</TableHead>
-                    <TableHead>Leave Period</TableHead>
-
-                    <TableHead>Submitted On</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Actions</TableHead>
+                    <TableHead className="w-1/5">Employee</TableHead>
+                    <TableHead className="w-1/6">Department</TableHead>
+                    <TableHead className="w-1/5">Leave Period</TableHead>
+                    <TableHead className="w-1/6">Submitted On</TableHead>
+                    <TableHead className="w-1/12">Status</TableHead>
+                    <TableHead className="w-1/6">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {console.log(
-                    "Filtered leave application ",
-                    filteredLeaveApplications
-                  )}
                   {filteredLeaveApplications.length === 0 ? (
                     <TableRow>
                       <TableCell colSpan={7} className="text-center py-4">
@@ -313,27 +373,27 @@ export default function LeaveNotificationsPage() {
                   ) : (
                     filteredLeaveApplications.map((leave) => (
                       <TableRow key={leave._id} className="hover:bg-gray-50">
-                        <TableCell>
-                          <div>
+                        <TableCell className="max-w-52 truncate">
+                          <div className="max-w-full">
                             <div className="font-medium">
                               {leave.employeeName}
                             </div>
-                            <div className="text-sm text-gray-500">
+                            <div className="text-sm text-gray-500 truncate">
                               {leave.employeeId}
                             </div>
                           </div>
                         </TableCell>
-                        <TableCell>{leave.department}</TableCell>
+                        <TableCell className="max-w-32 truncate">{leave.department}</TableCell>
                         <TableCell>
                           <div className="flex items-center">
-                            <div className="flex items-center space-x-2">
-                              <span className="px-2 py-1 bg-gray-50 rounded-md border border-gray-200">
+                            <div className="flex flex-wrap items-center gap-2">
+                              <span className="px-2 py-1 bg-gray-50 rounded-md border border-gray-200 text-sm">
                                 {formatDate(leave.startDate)}
                               </span>
                               {leave.startDate !== leave.endDate && (
                                 <>
                                   <span className="text-gray-400">→</span>
-                                  <span className="px-2 py-1 bg-gray-50 rounded-md border border-gray-200">
+                                  <span className="px-2 py-1 bg-gray-50 rounded-md border border-gray-200 text-sm">
                                     {formatDate(leave.endDate)}
                                   </span>
                                 </>
@@ -342,7 +402,7 @@ export default function LeaveNotificationsPage() {
                           </div>
                         </TableCell>
 
-                        <TableCell>
+                        <TableCell className="text-sm">
                           {formatTimestamp(leave.submittedAt)}
                         </TableCell>
                         <TableCell>
@@ -359,7 +419,7 @@ export default function LeaveNotificationsPage() {
                           </Badge>
                         </TableCell>
                         <TableCell>
-                          <div className="flex space-x-2">
+                          <div className="flex flex-wrap gap-2">
                             <Button
                               variant="outline"
                               size="sm"
@@ -385,9 +445,7 @@ export default function LeaveNotificationsPage() {
                                   variant="outline"
                                   size="sm"
                                   className="bg-red-100 hover:bg-red-200 text-red-800 border-red-200"
-                                  onClick={() =>
-                                    handleStatusChange(leave._id, "Rejected")
-                                  }
+                                  onClick={() => openRejectionDialog(leave._id)}
                                   disabled={isUpdating}
                                 >
                                   <X className="h-4 w-4 mr-1" />
@@ -446,7 +504,7 @@ export default function LeaveNotificationsPage() {
                   </div>
                   <div className="p-2 bg-white rounded border border-gray-100">
                     <p className="text-gray-500 mb-1">Email:</p>
-                    <p className="font-medium  break-words overflow-hidden">
+                    <p className="font-medium break-words overflow-hidden">
                       {selectedLeave.employeeEmail}
                     </p>
                   </div>
@@ -492,6 +550,16 @@ export default function LeaveNotificationsPage() {
                     {selectedLeave.reason}
                   </p>
                 </div>
+                
+                {/* Display rejection reason if status is Rejected */}
+                {selectedLeave.status === "Rejected" && selectedLeave.rejectedReason && (
+                  <div className="mt-4">
+                    <p className="text-gray-500">Rejection Reason:</p>
+                    <p className="mt-2 p-4 bg-red-50 rounded border border-red-200 text-red-800">
+                      {selectedLeave.rejectedReason}
+                    </p>
+                  </div>
+                )}
               </div>
 
               {selectedLeave.status === "Pending" && (
@@ -500,8 +568,7 @@ export default function LeaveNotificationsPage() {
                     variant="outline"
                     className="bg-red-100 hover:bg-red-200 text-red-800 border-red-200"
                     onClick={() => {
-                      handleStatusChange(selectedLeave.id, "Rejected");
-                      setDetailsOpen(false);
+                      openRejectionDialog(selectedLeave._id);
                     }}
                     disabled={isUpdating}
                   >
@@ -511,7 +578,7 @@ export default function LeaveNotificationsPage() {
                   <Button
                     className="bg-green-500 hover:bg-green-600"
                     onClick={() => {
-                      handleStatusChange(selectedLeave.id, "Approved");
+                      handleStatusChange(selectedLeave._id, "Approved");
                       setDetailsOpen(false);
                     }}
                     disabled={isUpdating}
@@ -527,6 +594,49 @@ export default function LeaveNotificationsPage() {
           <DialogFooter>
             <Button variant="outline" onClick={() => setDetailsOpen(false)}>
               Close
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Rejection Reason Modal */}
+      <Dialog open={rejectionOpen} onOpenChange={setRejectionOpen}>
+        <DialogContent className="bg-white sm:max-w-[500px] text-black">
+          <DialogHeader>
+            <DialogTitle className="text-lg font-semibold">
+              Rejection Reason
+            </DialogTitle>
+          </DialogHeader>
+          
+          <div className="py-4">
+            <p className="mb-4 text-gray-600">
+              Please provide a reason for rejecting this leave request.
+              This will be visible to the employee.
+            </p>
+            <Textarea
+              placeholder="Enter rejection reason..."
+              className="min-h-32"
+              value={rejectionReason}
+              onChange={(e) => setrejectionReason(e.target.value)}
+            />
+            {error && rejectionReason.trim() === "" && (
+              <p className="mt-2 text-sm text-red-600">{error}</p>
+            )}
+          </div>
+          
+          <DialogFooter className="flex justify-between">
+            <Button 
+              variant="outline" 
+              onClick={() => setRejectionOpen(false)}
+            >
+              Cancel
+            </Button>
+            <Button 
+              className="bg-red-600 hover:bg-red-700 text-white" 
+              onClick={handleReject}
+              disabled={isUpdating || !rejectionReason.trim()}
+            >
+              Confirm Rejection
             </Button>
           </DialogFooter>
         </DialogContent>
